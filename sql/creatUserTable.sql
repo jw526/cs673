@@ -1,5 +1,3 @@
-CREATE DATABASE investments_management_system;
-
 /* ===== Login tables ===== */
 CREATE TABLE users (
     user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,

@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>My Stock App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" media="screen" href="/index.css" />
-  <link rel="stylesheet" type="text/css" media="screen" href="/libs/bootstrap/css/bootstrap-grid.min.css" />
-  <link rel="stylesheet" type="text/css" media="screen" href="/libs/bootstrap/css/bootstrap-reboot.min.css" />
-  <link rel="stylesheet" type="text/css" media="screen" href="/libs/bootstrap/css/bootstrap.min.css" />
-</head>
+  <?php include('./pages/partials/header.php'); ?>
 <body>
   <form>
     <div class="form-group">
@@ -27,7 +18,7 @@
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
-  <script src="/libs/jquery.js"></script>
-  <script src="/libs/bootstrap/js/bootstrap.min.js"></script>
+
+  <?php include('./pages/partials/footer.php'); ?>
 </body>
 </html>

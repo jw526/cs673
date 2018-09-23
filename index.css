@@ -1,3 +1,10 @@
+.portfolio-table,
+.header-button-container {
+  text-align: center;
+  margin-top: 30px;
+}
+
+
 .login-form {
   width: 350px;
   display: inline-block;

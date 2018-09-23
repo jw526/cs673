@@ -6,27 +6,25 @@
 // Init App
 window.App = window.App || {};
 
-// We will store the App State Here
-window.App.state = {
-  userInfo: {
-    username: null,
-    email: null,
-  },
-  portfolio: {}
-}
-
-// Utils will go here
-window.App.utils = {
-
-}
 
 // Endpoints will go here
 window.App.endpoints = {
-  login: '/apis/login.php'
+  login: '/apis/login.php',
+  getUserPortfolio: '/apis/getUserPortfolios.php'
 }
 
+// function that init a page
 window.App.init = {
-  LoginScreen: initLoginScreen
+  LoginScreen: initLoginScreen,
+  MyAccount: initMyAccount
+}
+
+
+// -- initalization functions --
+function initMyAccount () {
+  window.App.User.getUserBasicInfo([
+    window.App.Portfolio.loadUserPortfolio
+  ]);
 }
 
 function initLoginScreen () {

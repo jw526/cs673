@@ -15,35 +15,22 @@ window.App = window.App || {};
 
 
   function _loadUserPortfolio() {
-    var apiRes = [{
-      id: 'sd',
-      qty: 67,
-      currentPrice: 78,
-      profit: 43.43
-    }, {
-        id: 'sd',
-        qty: 67,
-        currentPrice: 78,
-        profit: 43.43
-      }, {
-        id: 'sd',
-        qty: 67,
-        currentPrice: 78,
-        profit: 43.43
-      }];
-
-    renderPortfolioRows(apiRes);
+    $.ajax(window.App.endpoints.getUserPortfolio, {
+      method: 'post',
+      success: renderPortfolioRows
+    });
   }
 
-  function renderPortfolioRows(portfolios) {
+  function renderPortfolioRows(res) {
     let table = $("#portfolio-table-body");
 
-    portfolios.forEach(portfolio => {
+    res.portfolios.forEach(portfolio => {
       let template = $("#portfolio-row-template").clone(true);
-      template.children('.ticket-number').html(portfolio.id);
-      template.children('.quantity').html(portfolio.qty);
-      template.children('.current-price').html(portfolio.currentPrice);
-      template.children('.profit').html(portfolio.profit);
+      template.children('.number').html(portfolio.id);
+      template.children('.name').html(portfolio.name);
+      template.children('.cash').html(portfolio.cash);
+      template.children('.stock').html(portfolio.stock);
+      template.children('.total').html(portfolio.total);
       template.removeClass('template');
       table.append(template);
     });

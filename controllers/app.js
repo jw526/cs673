@@ -13,21 +13,22 @@ window.App.endpoints = {
   getUserPortfolio: '/apis/getUserPortfolios.php'
 }
 
+
 // function that init a page
-window.App.init = {
+App.init = {
   LoginScreen: initLoginScreen,
   MyAccount: initMyAccount
 }
 
 
 // -- initalization functions --
-function initMyAccount () {
+function initMyAccount() {
   window.App.User.getUserBasicInfo([
     window.App.Portfolio.loadUserPortfolio
   ]);
 }
 
-function initLoginScreen () {
+function initLoginScreen() {
   $("#login-form").on('submit', function (event) {
     event.preventDefault();
     var email = event.target.email.value;

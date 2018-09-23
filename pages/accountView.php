@@ -3,6 +3,8 @@
   <?php include('./partials/header.php'); ?>
 <body>
 
+  <h1 class="center">My Portfolios</h1>
+
   <!-- Action Bar -->
   <div class="header-button-container">
     <button class="btn btn-primary" onclick="$('#add-port-modal').modal('toggle')">Add Portfolio</button>
@@ -32,11 +34,11 @@
     </thead>
     <tbody id="portfolio-table-body">
       <tr id="portfolio-row-template" class="template portfolio-row">
-        <th class="number">1</th>
-        <td class="name">Mark</td>
-        <td class="cash">Otto</td>
-        <td class="stock">Otto</td>
-        <td class="total">@mdo</td>
+        <th class="number"></th>
+        <td class="name"></td>
+        <td class="cash"></td>
+        <td class="stock"></td>
+        <td class="total"></td>
         <td class="delete">
           <button class="btn btn-danger" onclick="$('#delete-port-modal').modal('toggle')">delete</button>
         </td>

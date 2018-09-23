@@ -9,8 +9,8 @@ window.App = window.App || {};
 
 // Endpoints will go here
 window.App.endpoints = {
-  login: '/apis/login.php',
-  getUserPortfolio: '/apis/getUserPortfolios.php'
+  login: '/~mc332/cs673/apis/login.php',
+  getUserPortfolio: '/~mc332/cs673/apis/getUserPortfolios.php'
 }
 
 

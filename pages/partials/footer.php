@@ -1,5 +1,13 @@
-<script type="text/javascript" src="/~mc332/cs673/libs/jquery.js" ></script>
-<script type="text/javascript" src="/~mc332/cs673/libs/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/~mc332/cs673/controllers/app.js"></script>
-<script type="text/javascript" src="/~mc332/cs673/controllers/user.js"></script>
-<script type="text/javascript" src="/~mc332/cs673/controllers/portfolios.js"></script>
+<script type="text/javascript">
+  <?php 
+    include(dirname(__FILE__). '/../../libs/jquery.js');
+    include(dirname(__FILE__). '/../../libs/bootstrap/js/bootstrap.min.js');
+  ?>
+</script>
+<script type="text/javascript">
+  <?php 
+    include(dirname(__FILE__). '/../../controllers/app.js');
+    include(dirname(__FILE__). '/../../controllers/user.js');
+    include(dirname(__FILE__). '/../../controllers/portfolios.js');
+  ?>
+</script>

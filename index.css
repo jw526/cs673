@@ -12,3 +12,7 @@
 .center {
   text-align: center;
 }
+
+.template {
+  display: none;
+}

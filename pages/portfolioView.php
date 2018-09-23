@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
-  <?php include('./pages/partials/header.php'); ?>
+  <?php include('./partials/header.php'); ?>
 <body>
 
 
-  <?php include('./pages/partials/footer.php'); ?>
+  <?php include('./partials/footer.php'); ?>
 </body>
 </html>

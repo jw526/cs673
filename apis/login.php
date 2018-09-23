@@ -2,8 +2,8 @@
 header('Content-Type: application/json');
 
 $obj = (object) [
-    'aString' => 'some string',
-    'anArray' => [ 1, 2, 3 ]
+    'isUserRegistered' => true,
+    'ads' => $_POST['email']
 ];
 
 echo json_encode($obj);

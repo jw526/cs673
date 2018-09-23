@@ -10,12 +10,30 @@ window.App = window.App || {};
 
   // This will expose the user controller
   App.User = {
-    getUserBasicInfo: _getUserInfo
+    getUserBasicInfo: _getUserInfo,
+    login: _login
   }
 
 
-  function _getUserInfo() {
-    App.ajax(App.endpoints.getUserBasicInfo)
+  function _login (email, password, callback) {
+    $.ajax(window.App.endpoints.login, {
+      method: 'post',
+      success: callback,
+      data: {
+        email: email,
+        password: password
+      }
+    })  
+  }
+
+  function _getUserInfo(callbacks) {
+    callbacks.forEach(callback => {
+      callback();
+    });
+    return {
+      email: 'mike',
+      id: ''
+    }
   }
 
 })(window.App)

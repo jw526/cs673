@@ -22,4 +22,6 @@
       return mysqli_fetch_assoc($result);
   }
 
+  echo fetching_personal_info('3');
+
 ?>

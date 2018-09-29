@@ -9,14 +9,6 @@
   <div class="header-button-container">
     <button class="btn btn-primary" onclick="$('#add-port-modal').modal('toggle')">Add Portfolio</button>
     <button class="btn btn-secondary" type="submit">Logout</button> <br/>
-    <div class="center" style="width:400px; display:inline-block; margin-top:10px;">
-      <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="appl">
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
-        </div>
-      </div>
-    </div>
 
   </div>
 

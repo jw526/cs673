@@ -3,7 +3,7 @@
  * @summary This is the main js will that will initalize the App name space
  */
 
-// Init App
+// Init App.
 window.App = window.App || {};
 
 window.App.isLocalHost = window.location.href.indexOf('~mc332') === -1;

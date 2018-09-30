@@ -8,7 +8,7 @@
   <!-- Action Bar -->
   <div class="header-button-container">
     <button class="btn btn-primary" onclick="$('#add-port-modal').modal('toggle')">Add Portfolio</button>
-    <button class="btn btn-secondary" type="submit">Logout</button> <br/>
+    <button class="btn btn-secondary" type="button" id="logout-button">Logout</button> <br/>
 
   </div>
 

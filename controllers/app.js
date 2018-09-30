@@ -11,15 +11,18 @@ window.App.isLocalHost = window.location.href.indexOf('~mc332') === -1;
 // Endpoints will go here
 window.App.endpoints = {
   login: window.App.isLocalHost ? '/apis/login.php' : '/~mc332/cs673/apis/login.php',
+  logout: window.App.isLocalHost ? '/apis/logout.php' : '/~mc332/cs673/apis/logout.php',
   getUserPortfolio: window.App.isLocalHost ? '/apis/getUserPortfolios.php' : '/~mc332/cs673/apis/getUserPortfolios.php',
-  getPortfolioById: window.App.isLocalHost ? '/apis/getPortfolioById.php' : '/~mc332/cs673/apis/getPortfolioById.php'
+  getPortfolioById: window.App.isLocalHost ? '/apis/getPortfolioById.php' : '/~mc332/cs673/apis/getPortfolioById.php',
+  getUserInfo: window.App.isLocalHost ? '/apis/getUserInfo.php' : '/~mc332/cs673/apis/getUserInfo.php'
 }
 
 //All Pages in out app
 window.App.pages = {
   myAccount: window.App.isLocalHost ? '/pages/accountView.php' : '/~mc332/cs673/pages/accountView.php',
   portfolioView: window.App.isLocalHost ? '/pages/portfolioView.php' : '/~mc332/cs673/pages/portfolioView.php',
-  stockView: window.App.isLocalHost ? '/pages/stockView.php' : '/~mc332/cs673/pages/stockView.php'
+  stockView: window.App.isLocalHost ? '/pages/stockView.php' : '/~mc332/cs673/pages/stockView.php',
+  login: window.App.isLocalHost ? '/' : '/~mc332/cs673/'
 }
 
 
@@ -36,6 +39,8 @@ function initMyAccount() {
   window.App.User.getUserBasicInfo([
     window.App.Portfolio.loadUserPortfolios
   ]);
+
+  $("#logout-button").on('click', window.App.User.logout);
 }
 
 function initMyPortfolio() {

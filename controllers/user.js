@@ -11,7 +11,8 @@ window.App = window.App || {};
   // This will expose the user controller
   App.User = {
     getUserBasicInfo: _getUserInfo,
-    login: _login
+    login: _login,
+    logout: _logout
   }
 
 
@@ -26,13 +27,28 @@ window.App = window.App || {};
     })  
   }
 
+  function _logout () {
+    $.ajax(window.App.endpoints.logout, {
+      method: 'post',
+      success: _getUserInfo,
+    })  
+  }
+
   function _getUserInfo(callbacks) {
-    callbacks.forEach(callback => {
-      callback();
+    $.ajax(window.App.endpoints.getUserInfo, {
+      method: 'post',
+      success: successCallbacks
     });
-    return {
-      email: 'mike',
-      id: ''
+
+
+    function successCallbacks (data) {
+      if (!data.isUserRegistered) {
+        window.location.href = window.App.pages.login;
+      } else {
+        callbacks.forEach(callback => {
+          callback();
+        });
+      }
     }
   }
 

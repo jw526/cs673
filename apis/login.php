@@ -1,10 +1,33 @@
 <?php
-header('Content-Type: application/json');
+    include('./__init__.php');
+    header('Content-Type: application/json');
+    
+    global $dbc;
+    $username = $_POST['email'];
+    $password = $_POST['password'];
+    $sql = "
+        SELECT *
+        FROM users
+        WHERE username = '$username'
+            AND password = '$password'";
 
-$obj = (object) [
-    'isUserRegistered' => true,
-    'ads' => $_POST['email']
-];
+    $result = mysqli_query($dbc, $sql);
 
-echo json_encode($obj);
+    $isUserInSystem = $result->num_rows > 0;
+
+    // Convert To JSON and send back
+    $obj = (object) [
+        'isUserRegistered' => $isUserInSystem
+    ];
+    echo json_encode($obj);
+
+
+    $_SESSION["username"] = $username;
+
+    /* free result set */
+    mysqli_free_result($result);
+
+    /* Close Connection */
+    mysqli_close($dbc);
+    
 ?>

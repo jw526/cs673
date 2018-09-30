@@ -56,7 +56,7 @@
 
 
             <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="4 ex." aria-label="Recipient's username" aria-describedby="basic-addon2">
+              <input type="number" class="form-control" placeholder="4 ex." aria-label="Recipient's username" aria-describedby="basic-addon2">
               <div class="input-group-append">
                 <span class="input-group-text" id="basic-addon2">Amount?</span>
               </div>

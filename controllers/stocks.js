@@ -15,25 +15,25 @@ window.App = window.App || {};
 
 
   function _buyStock() {
-    portfolio_id
-    stock_market
-    ticker
-    company_name
-    quantity
-    price
+    let porfolioId = $("#portfolio-list-for-buy").val();
+    let qty = $("#stock-buy-qty").val();
+
 
     $.ajax(window.App.endpoints.buyStock, {
       method: 'post',
       success: function (data) {
-        alert('GOOD TO GO');
+        $('#view-stock-modal').modal('toggle');
+        $("#stock-modal-title").html('');
+        $("#search-stock-price").html('');
+        alert('transaction complete');
       },
       data: {
-        portfolio_id: portfolio_id,
-        stock_market: stock_market,
-        ticker: ticker,
-        company_name: company_name,
-        quantity: quantity,
-        price: price
+        portfolio_id: porfolioId,
+        stock_market: window.App.datalayer.searchStockData.stock_market,
+        ticker: window.App.datalayer.searchStockData.ticker,
+        company_name: window.App.datalayer.searchStockData.company_name,
+        quantity: qty,
+        price: window.App.datalayer.searchStockData.price
       }
     });
   }

@@ -14,8 +14,9 @@
     include(dirname(__FILE__). '/./supportedStocks.js');
   ?>
 
-    $( function() {
-      $.widget( "custom.catcomplete", $.ui.autocomplete, {
+  // Init search auto complete
+  $( function() {
+    $.widget( "custom.catcomplete", $.ui.autocomplete, {
       _create: function() {
         this._super();
         this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );

@@ -1,6 +1,5 @@
 <?php
     include('./__init__.php');
-    header('Content-Type: application/json');
     
     global $dbc;
     $portfolioName = $_POST['portfolioName'];

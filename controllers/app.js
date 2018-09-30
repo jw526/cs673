@@ -14,6 +14,8 @@ window.App.isLocalHost = window.location.href.indexOf('~mc332') === -1;
 // Endpoints will go here
 window.App.endpoints = {
   login: window.App.isLocalHost ? '/apis/login.php' : '/~mc332/cs673/apis/login.php',
+  addCashPortfolio: window.App.isLocalHost ? '/apis/addCashPortfolio.php' : '/~mc332/cs673/apis/addCashPortfolio.php',
+  getCashPortfolio: window.App.isLocalHost ? '/apis/getCashPortfolio.php' : '/~mc332/cs673/apis/getCashPortfolio.php',
   addNewPortfolio: window.App.isLocalHost ? '/apis/addNewPortfolio.php' : '/~mc332/cs673/apis/addNewPortfolio.php',
   deletePortfolio: window.App.isLocalHost ? '/apis/deletePortfolio.php' : '/~mc332/cs673/apis/deletePortfolio.php',
   logout: window.App.isLocalHost ? '/apis/logout.php' : '/~mc332/cs673/apis/logout.php',
@@ -50,7 +52,8 @@ function initMyAccount() {
 
 function initMyPortfolio() {
   window.App.User.getUserBasicInfo([
-    window.App.Portfolio.loadPortfolioById
+    window.App.Portfolio.loadPortfolioById,
+    window.App.Portfolio.getCashPortfolio
   ]);
 }
 

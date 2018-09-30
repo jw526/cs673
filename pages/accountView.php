@@ -3,7 +3,8 @@
   <?php include('./partials/header.php'); ?>
 <body>
 
-  <h1 class="center">My Portfolios</h1>
+  <h1 class="center"> My Portfolios</h1>
+  <div class="center">Cash Account Balance: <span id="cash-account-balance">$0</span></div>
 
   <!-- Action Bar -->
   <div class="header-button-container">

@@ -14,10 +14,62 @@ window.App = window.App || {};
     loadPortfolioById: _loadPortfolioById,
     addNewPortfolio: _addNewPortfolio,
     deletePortfolio: _deletePortfolio,
-    toggleDeleteModal: _toggleDeleteModal
+    toggleDeleteModal: _toggleDeleteModal,
+    addCashPortfolio: _addCashPortfolio,
+    getCashPortfolio: _getCashPortfolio
   }
 
 
+
+  function _getCashPortfolio() {
+    let portfolioId = null;
+
+    try {
+      portfolioId = (new URLSearchParams(window.location.search)).get('id');
+    } catch (ex) {
+      console.error('Most Likly IE browser');
+      portfolioId = window.location.search.split('id')[1].split('&')[0].replace('=', '');
+    }
+
+    $.ajax(window.App.endpoints.getCashPortfolio, {
+      method: 'post',
+      success: function (data) {
+        $("#cash-account-balance").html(data.totalCash);
+      },
+      data: {
+        portfolioId: portfolioId
+      }
+    });
+  }
+
+
+  function _addCashPortfolio(element) {
+    var amount = $("#add-cash-amount").val();
+    let portfolioId = null;
+
+    try {
+      portfolioId = (new URLSearchParams(window.location.search)).get('id');
+    } catch (ex) {
+      console.error('Most Likly IE browser');
+      portfolioId = window.location.search.split('id')[1].split('&')[0].replace('=', '');
+    }
+
+    if (!amount) {
+      return;
+    } else {
+      $.ajax(window.App.endpoints.addCashPortfolio, {
+        method: 'post',
+        success: function () {
+          _loadPortfolioById();
+          $('#add-cash-modal').modal('toggle');
+        },
+        data: {
+          cashAmount: amount,
+          portfolioId: portfolioId
+        }
+      });
+    }
+  }
 
   function _toggleDeleteModal(element) {
     var selectedPortfolioId = $($(element).parent().parent().children('.number')[0]).html()
@@ -87,6 +139,8 @@ window.App = window.App || {};
       console.error('Most Likly IE browser');
       portfolioId = window.location.search.split('id')[1].split('&')[0].replace('=', '');
     }
+
+    _getCashPortfolio();
 
     $.ajax(window.App.endpoints.getPortfolioById, {
       method: 'post',

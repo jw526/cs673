@@ -10,6 +10,7 @@
     include(dirname(__FILE__). '/../../controllers/app.js');
     include(dirname(__FILE__). '/../../controllers/user.js');
     include(dirname(__FILE__). '/../../controllers/portfolios.js');
+    include(dirname(__FILE__). '/../../controllers/stocks.js');
     include(dirname(__FILE__). '/./supportedStocks.js');
   ?>
 

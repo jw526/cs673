@@ -25,7 +25,8 @@ window.App.endpoints = {
   logout: window.App.isLocalHost ? '/apis/logout.php' : '/~mc332/cs673/apis/logout.php',
   getUserPortfolio: window.App.isLocalHost ? '/apis/getUserPortfolios.php' : '/~mc332/cs673/apis/getUserPortfolios.php',
   getPortfolioById: window.App.isLocalHost ? '/apis/getPortfolioById.php' : '/~mc332/cs673/apis/getPortfolioById.php',
-  getUserInfo: window.App.isLocalHost ? '/apis/getUserInfo.php' : '/~mc332/cs673/apis/getUserInfo.php'
+  getUserInfo: window.App.isLocalHost ? '/apis/getUserInfo.php' : '/~mc332/cs673/apis/getUserInfo.php',
+  getStockInfo: window.App.isLocalHost ? '/apis/getStockInfo.php' : '/~mc332/cs673/apis/getStockInfo.php'
 }
 
 //All Pages in out app
@@ -47,29 +48,7 @@ App.init = {
 
 // -- initalization functions --
 function allPagesInit (params) {
-  $("#search-stock-form").on('submit', function (event) {
-    event.preventDefault();
-    var stock = event.target['search-input-feild'].value;
-    
-    if ((dow30.concat(indiaStocks)).indexOf(stock) === -1) {
-      alert('Sorry Stock Not Found');
-      return;
-    }
-
-    $("#stock-modal-title").html(stock);
-    $('#view-stock-modal').modal();
-
-    var isDow30 = dow30.indexOf(stock) > -1;
-
-    // Store Stock Data for latter use
-    window.App.datalayer.searchStockData = {
-      stock_market: isDow30 ? 'Dow-30' : 'BSE/NSE',
-      ticker: stock.split(":")[0],
-      company_name: !isDow30 ? stock : stock.split(":")[1],
-      price: 80
-    }
-  });
-
+  $("#search-stock-form").on('submit', App.Stocks.getStockInfo);
   window.App.Portfolio.getPortfoliosForBuyModal();
 }
 

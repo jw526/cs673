@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html>
+  <style>
+    #navigation-bar {
+      display: none;
+    }
+  </style>
   <?php include('./pages/partials/header.php'); ?>
 <body class="center">
   <form class="login-form" id="login-form">

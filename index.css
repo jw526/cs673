@@ -31,3 +31,12 @@
 .template {
   display: none;
 }
+
+.ui-autocomplete-category {
+  color: green;
+  font-weight: bold;
+  text-align: center;
+  padding: 8px;
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
+}

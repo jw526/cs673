@@ -31,6 +31,13 @@ var dow30 = [
   'WBA: Walgreen'
 ];
 
+let categoryDow30 = []
+for (let index = 0; index < dow30.length; index++) {  
+  categoryDow30.push({ label: dow30[index], category: "Dow 30" });
+}
+dow30 = categoryDow30;
+
+
 var indiaStocks = [
   'Axis Bank',
   'Wipro', 
@@ -83,3 +90,9 @@ var indiaStocks = [
   'Ibull HousingFin',
   'YES Bank',
 ];
+
+let categoryIndiaStocks = []
+for (let index = 0; index < dow30.length; index++) {
+  categoryIndiaStocks.push({ label: indiaStocks[index], category: "India Nifty Fifty" });
+}
+indiaStocks = categoryIndiaStocks;

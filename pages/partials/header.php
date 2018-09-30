@@ -7,6 +7,7 @@
     <?php 
       include(dirname(__FILE__). '/../../index.css');
       include(dirname(__FILE__). '/../../libs/bootstrap/css/bootstrap-grid.min.css');
+      include(dirname(__FILE__). '/../../libs/jquery-ui.min.css');
       include(dirname(__FILE__). '/../../libs/bootstrap/css/bootstrap-reboot.min.css');
       include(dirname(__FILE__). '/../../libs/bootstrap/css/bootstrap.min.css');
     ?>
@@ -24,7 +25,7 @@
         </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <input id="search-input-feild" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outlined my-2 my-sm-0" type="submit">Search</button>
       </form>
     </div>

@@ -52,8 +52,7 @@ function initMyAccount() {
 
 function initMyPortfolio() {
   window.App.User.getUserBasicInfo([
-    window.App.Portfolio.loadPortfolioById,
-    window.App.Portfolio.getCashPortfolio
+    window.App.Portfolio.loadPortfolioById
   ]);
 }
 

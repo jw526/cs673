@@ -42,6 +42,10 @@
           </div>
           <div class="modal-body">
 
+            <div class="stock-info-container center"> 
+              <h4>Price $<span>84.90</span></h4>
+            </div>
+
             <div class="input-group mb-3">
               <select class="custom-select" id="portfolio-list-for-buy">
                 <option selected>Choose...</option>

@@ -6,7 +6,10 @@
 // Init App..
 window.App = window.App || {};
 window.App.datalayer = {
-  selectedPortfolioId: null // the currently selected PortfolioId
+  selectedPortfolioId: null, // the currently selected PortfolioId
+  searchStockData: {
+
+  }
 };
 
 window.App.isLocalHost = window.location.href.indexOf('~mc332') === -1;
@@ -15,6 +18,7 @@ window.App.isLocalHost = window.location.href.indexOf('~mc332') === -1;
 window.App.endpoints = {
   login: window.App.isLocalHost ? '/apis/login.php' : '/~mc332/cs673/apis/login.php',
   addCashPortfolio: window.App.isLocalHost ? '/apis/addCashPortfolio.php' : '/~mc332/cs673/apis/addCashPortfolio.php',
+  buyStock: window.App.isLocalHost ? '/apis/buyStock.php' : '/~mc332/cs673/apis/buyStock.php',
   getCashPortfolio: window.App.isLocalHost ? '/apis/getCashPortfolio.php' : '/~mc332/cs673/apis/getCashPortfolio.php',
   addNewPortfolio: window.App.isLocalHost ? '/apis/addNewPortfolio.php' : '/~mc332/cs673/apis/addNewPortfolio.php',
   deletePortfolio: window.App.isLocalHost ? '/apis/deletePortfolio.php' : '/~mc332/cs673/apis/deletePortfolio.php',
@@ -54,6 +58,16 @@ function allPagesInit (params) {
 
     $("#stock-modal-title").html(stock);
     $('#view-stock-modal').modal();
+
+    var isDow30 = dow30.indexOf(stock) > -1;
+
+    // Store Stock Data for latter use
+    window.App.datalayer.searchStockData = {
+      stock_market: isDow30 ? 'Dow-30' : 'BSE/NSE',
+      ticker: stock.split(":")[0],
+      company_name: !isDow30 ? stock : stock.split(":")[1],
+      price: 80
+    }
   });
 
   window.App.Portfolio.getPortfoliosForBuyModal();

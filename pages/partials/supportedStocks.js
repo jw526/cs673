@@ -90,6 +90,6 @@ var indiaStocks = [
 ];
 
 let categoryIndiaStocks = []
-for (let index = 0; index < dow30.length; index++) {
+for (let index = 0; index < indiaStocks.length; index++) {
   categoryIndiaStocks.push({ label: indiaStocks[index], category: "India Nifty Fifty" });
 }

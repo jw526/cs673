@@ -37,7 +37,7 @@
     });
 
       $( "#search-input-feild" ).catcomplete({
-        source: dow30.concat(indiaStocks)
+        source: categoryDow30.concat(categoryIndiaStocks)
       });
     });
 </script>

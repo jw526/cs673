@@ -42,6 +42,21 @@ App.init = {
 
 
 // -- initalization functions --
+function allPagesInit (params) {
+  $("#search-stock-form").on('submit', function (event) {
+    event.preventDefault();
+    var stock = event.target['search-input-feild'].value;
+    
+    if ((dow30.concat(indiaStocks)).indexOf(stock) === -1) {
+      alert('Sorry Stock Not Found');
+      return;
+    }
+
+    $("#stock-modal-title").html(stock);
+    $('#view-stock-modal').modal();
+  })
+}
+
 function initMyAccount() {
   window.App.User.getUserBasicInfo([
     window.App.Portfolio.loadUserPortfolios
@@ -71,3 +86,5 @@ function initLoginScreen() {
     })
   })
 }
+
+allPagesInit();

@@ -14,14 +14,14 @@ var dow30 = [
   'HD: Home Depot',
   'IBM: IBM',
   'INTC: Intel',
-  'JNJ: Johnson &amp; Johnson',
+  'JNJ: Johnson & Johnson',
   'JPM: JPMorgan Chase',
   'MCD: McDonald\'s',
   'MRK: Merck',
   'MSFT: Microsoft',
   'NKE: Nike',
   'PFE: Pfizer',
-  'PG: Procter &amp; Gamble',
+  'PG: Procter & Gamble',
   'TRV: Travelers Companies Inc',
   'UTX: United Technologies',
   'UNH: UnitedHealth',
@@ -35,8 +35,6 @@ let categoryDow30 = []
 for (let index = 0; index < dow30.length; index++) {  
   categoryDow30.push({ label: dow30[index], category: "Dow 30" });
 }
-dow30 = categoryDow30;
-
 
 var indiaStocks = [
   'Axis Bank',
@@ -71,13 +69,13 @@ var indiaStocks = [
   'Zee Ent.',
   'Bajaj Finance',
   'Bharti Infratel',
-  'M & amp; M',
+  'M & M',
   'Adani Ports SEZ',
   'Titan Company ',
   'Maruti Suzuki',
   'UPL ',
   'Eicher Motors',
-  'Larsen & amp; Toubro',
+  'Larsen & Toubro',
   'PowerGrid',
   'Bajaj Auto',
   'Vedanta ',
@@ -95,4 +93,3 @@ let categoryIndiaStocks = []
 for (let index = 0; index < dow30.length; index++) {
   categoryIndiaStocks.push({ label: indiaStocks[index], category: "India Nifty Fifty" });
 }
-indiaStocks = categoryIndiaStocks;

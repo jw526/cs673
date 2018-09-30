@@ -24,10 +24,50 @@
           <a class="nav-link" href="/~mc332/cs673/pages/accountView.php">My Account</a>
         </li>
       </ul>
-      <form class="form-inline my-2 my-lg-0">
-        <input id="search-input-feild" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <form class="form-inline my-2 my-lg-0" id="search-stock-form">
+        <input id="search-input-feild" name="search-input-feild" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outlined my-2 my-sm-0" type="submit">Search</button>
       </form>
+    </div>
+
+    <!-- Stock Search Modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="view-stock-modal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="stock-modal-title">?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+
+            <div class="input-group mb-3">
+              <select class="custom-select" id="inputGroupSelect02">
+                <option selected>Choose...</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
+              <div class="input-group-append">
+                <label class="input-group-text" for="inputGroupSelect02">Portfolio</label>
+              </div>
+            </div>
+
+
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="4 ex." aria-label="Recipient's username" aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">Amount?</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success">Buy</button>
+          </div>
+      </div>
     </div>
   </nav>
 </head>

@@ -22,7 +22,13 @@
     echo json_encode($obj);
 
 
-    $_SESSION["username"] = $username;
+    
+
+    while($row = mysqli_fetch_assoc($result)) {          
+        $_SESSION["user_id"] = $row["user_id"];
+        $_SESSION["username"] = $row["username"];
+    } 
+
 
     /* free result set */
     mysqli_free_result($result);

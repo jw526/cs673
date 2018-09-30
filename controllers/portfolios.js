@@ -11,9 +11,30 @@ window.App = window.App || {};
   // This will expose the user controller
   App.Portfolio = {
     loadUserPortfolios: _loadUserPortfolios,
-    loadPortfolioById: _loadPortfolioById
+    loadPortfolioById: _loadPortfolioById,
+    addNewPortfolio: _addNewPortfolio
   }
 
+
+  function _addNewPortfolio(event) {
+    var name = $("#new-portfolio-name").val();
+
+    if (!name) {
+      return;
+    } else {
+      $.ajax(window.App.endpoints.addNewPortfolio, {
+        method: 'post',
+        success: function()
+          {
+            _loadUserPortfolios();
+            $('#add-port-modal').modal('toggle');
+          },
+        data: {
+          portfolioName: name
+        }
+      });
+    }
+  }
 
   /**
    * @summary this will call the api to get the user's portfolios and then call the render function
@@ -78,6 +99,10 @@ window.App = window.App || {};
    */
   function renderPortfolioRows(res) {
     let table = $("#portfolio-table-body");
+    let temp = $("#portfolio-row-template").clone(true); 
+
+    table.html('');
+    table.append(temp);
 
     res.portfolios.forEach(portfolio => {
       // Clone template

@@ -18,7 +18,7 @@
   <table class="table portfolio-table">
     <thead>
       <tr>
-        <th scope="col">Ticket Number</th>
+        <th scope="col">Ticker</th>
         <th scope="col">Quantity</th>
         <th scope="col">Profit</th>
         <th scope="col">Current Price</th>

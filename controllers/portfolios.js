@@ -12,9 +12,27 @@ window.App = window.App || {};
   App.Portfolio = {
     loadUserPortfolios: _loadUserPortfolios,
     loadPortfolioById: _loadPortfolioById,
-    addNewPortfolio: _addNewPortfolio
+    addNewPortfolio: _addNewPortfolio,
+    deletePortfolio: _deletePortfolio,
+    toggleDeleteModal: _toggleDeleteModal
   }
 
+
+
+  function _toggleDeleteModal(element) {
+    var selectedPortfolioId = $($(element).parent().parent().children('.number')[0]).html()
+
+    window.App.datalayer.selectedPortfolioId = selectedPortfolioId;
+
+    // This is a HACK so we dont redirect on row click 
+    window.isDontRedirect = true;
+    setTimeout(() => {
+      window.isDontRedirect = false;
+    }, 100);
+    // Hack above
+
+    $('#delete-port-modal').modal('toggle');
+  }
 
   function _addNewPortfolio(event) {
     var name = $("#new-portfolio-name").val();
@@ -34,6 +52,19 @@ window.App = window.App || {};
         }
       });
     }
+  }
+
+  function _deletePortfolio() {
+    $.ajax(window.App.endpoints.deletePortfolio, {
+      method: 'post',
+      success: function() {
+          _loadUserPortfolios();
+          $('#delete-port-modal').modal('toggle');
+      },
+      data: {
+        portfolioId: window.App.datalayer.selectedPortfolioId
+      }
+    });
   }
 
   /**
@@ -121,7 +152,9 @@ window.App = window.App || {};
 
 
       template.on('click', function (params) {
-        window.location.href = window.App.pages.portfolioView + '?id=' + portfolio.id;
+        if (!window.isDontRedirect) {
+          window.location.href = window.App.pages.portfolioView + '?id=' + portfolio.id;
+        }
       });
 
       //append to table

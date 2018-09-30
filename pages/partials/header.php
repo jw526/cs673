@@ -20,7 +20,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="/pages/accountView.php">My Account</a>
+          <a class="nav-link" href="/~mc332/cs673/pages/accountView.php">My Account</a>
         </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">

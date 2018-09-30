@@ -32,7 +32,7 @@
         <td class="stock"></td>
         <td class="total"></td>
         <td class="delete">
-          <button class="btn btn-danger" onclick="$('#delete-port-modal').modal('toggle')">delete</button>
+          <button class="btn btn-danger" onclick="window.App.Portfolio.toggleDeleteModal(this)">delete</button>
         </td>
       </tr>
     </tbody>
@@ -79,7 +79,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-danger">Delete</button>
+          <button type="button" class="btn btn-danger" onclick="window.App.Portfolio.deletePortfolio()">Delete</button>
         </div>
       </div>
     </div>

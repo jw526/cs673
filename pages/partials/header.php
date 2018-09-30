@@ -43,7 +43,7 @@
           <div class="modal-body">
 
             <div class="input-group mb-3">
-              <select class="custom-select" id="inputGroupSelect02">
+              <select class="custom-select" id="portfolio-list-for-buy">
                 <option selected>Choose...</option>
                 <option value="1">One</option>
                 <option value="2">Two</option>

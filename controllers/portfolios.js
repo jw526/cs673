@@ -16,7 +16,8 @@ window.App = window.App || {};
     deletePortfolio: _deletePortfolio,
     toggleDeleteModal: _toggleDeleteModal,
     addCashPortfolio: _addCashPortfolio,
-    getCashPortfolio: _getCashPortfolio
+    getCashPortfolio: _getCashPortfolio,
+    getPortfoliosForBuyModal: _getPortfoliosForBuyModal
   }
 
 
@@ -125,7 +126,17 @@ window.App = window.App || {};
   function _loadUserPortfolios() {
     $.ajax(window.App.endpoints.getUserPortfolio, {
       method: 'post',
-      success: renderPortfolioRows
+      success: function(data) {
+        renderPortfolioRows(data);
+        renerPortfoliosOnModal(data);
+      }
+    });
+  }
+
+  function _getPortfoliosForBuyModal() {
+    $.ajax(window.App.endpoints.getUserPortfolio, {
+      method: 'post',
+      success: renerPortfoliosOnModal
     });
   }
 
@@ -213,6 +224,17 @@ window.App = window.App || {};
 
       //append to table
       table.append(template);
+    });
+  }
+
+
+  function renerPortfoliosOnModal (res) {
+    var selectFeild = $("#portfolio-list-for-buy");
+    selectFeild.html('');
+
+    selectFeild.append("<option selected>Choose...</option>");
+    res.portfolios.forEach(portfolio => {
+      selectFeild.append("<option value=" + portfolio.id + ">" + portfolio.name + "</option>");
     });
   }
 

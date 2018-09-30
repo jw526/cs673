@@ -36,8 +36,10 @@
       }
     });
 
-      $( "#search-input-feild" ).catcomplete({
-        source: categoryDow30.concat(categoryIndiaStocks)
-      });
+    $( "#search-input-feild" ).catcomplete({
+      source: categoryDow30.concat(categoryIndiaStocks)
     });
+  });
+
+  allPagesInit();
 </script>

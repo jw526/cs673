@@ -54,7 +54,9 @@ function allPagesInit (params) {
 
     $("#stock-modal-title").html(stock);
     $('#view-stock-modal').modal();
-  })
+  });
+
+  window.App.Portfolio.getPortfoliosForBuyModal();
 }
 
 function initMyAccount() {
@@ -86,5 +88,3 @@ function initLoginScreen() {
     })
   })
 }
-
-allPagesInit();

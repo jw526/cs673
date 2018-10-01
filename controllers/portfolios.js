@@ -35,7 +35,7 @@ window.App = window.App || {};
     $.ajax(window.App.endpoints.getCashPortfolio, {
       method: 'post',
       success: function (data) {
-        $("#cash-account-balance").html(data.totalCash);
+        $("#cash-account-balance").html(data.totalCash || 0);
       },
       data: {
         portfolioId: portfolioId
@@ -160,10 +160,20 @@ window.App = window.App || {};
     });
   }
 
+  // Note i am doing stocks and transaction table in a single function, we may want to move this out if it gets to complicated
   function renderStocksInPortfolio (res) {
     let table = $("#portfolio-table-body");
+    let temp = $("#portfolio-row-template").clone(true);
+    table.html('');
+    table.append(temp);
 
-    res.stocks.forEach(portfolio => {
+    let isTransactionsView = window.location.href.indexOf(window.App.pages.portfolioView) === -1;
+
+    let stocks = isTransactionsView
+      ? res.stocks
+      : window.App.Stocks.aggregate(res.stocks)
+
+    stocks.forEach(portfolio => {
       // Clone template
       let template = $("#portfolio-row-template").clone(true);
 
@@ -171,7 +181,9 @@ window.App = window.App || {};
       template.children('.id').html(portfolio.id);
       template.children('.qty').html(portfolio.qty);
       template.children('.buy-price').html('$' + portfolio.price);
-      template.children('.total-value').html('$' + (portfolio.price * portfolio.qty));
+      template.children('.action').html(portfolio.action);
+      template.children('.date').html(portfolio.transaction_date);
+      template.children('.total-spent').html('$' + portfolio.totalSpent);
 
       // Remove not needed attributes
       template.removeClass('template');

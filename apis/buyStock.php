@@ -26,7 +26,7 @@
                     '$company_name',
                     '$quantity',
                     '$price',
-                    '$transaction_action',
+                    'buy',
                     NOW());
     ";
 

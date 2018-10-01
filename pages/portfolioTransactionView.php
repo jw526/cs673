@@ -3,15 +3,8 @@
   <?php include('./partials/header.php'); ?>
 <body>
 
-  <h1 class="center">My Stocks</h1>
+  <h1 class="center">Transactions</h1>
   <div class="center">Cash Balance: $<span id="cash-account-balance">0</span></div>
-
-  <!-- Action Bar -->
-  <div class="header-button-container">
-    <button class="btn btn-primary" onclick="$('#add-cash-modal').modal('toggle')">Add Cash</button>
-    <button class="btn btn-danger">Remove Cash</button>
-    <button class="btn btn-success" type="button" onclick="window.App.pages.portfolioTransactionView()">View Transactions</button>
-  </div>
 
   <!-- Table View -->
   <table class="table portfolio-table">
@@ -19,23 +12,18 @@
       <tr>
         <th scope="col">Ticker</th>
         <th scope="col">Quantity</th>
-        <th scope="col">Total Spent</th>
-        <th scope="col">Current Value</th>
-        <th scope="col">Gain/Lost</th>
-        <th scope="col">Actions</th>
+        <th scope="col">Buy Price</th>
+        <th scope="col">Transaction</th>
+        <th scope="col">Date</th>
       </tr>
     </thead>
     <tbody id="portfolio-table-body">
       <tr id="portfolio-row-template" class="template portfolio-row">
         <th class="id"></th>
         <td class="qty"></td>
-        <td class="total-spent"></td>
-        <td class="current-value">?</td>
-        <td class="gain-lost">?</td>
-        <td class="actions">
-          <!-- <button class="btn btn-success">Buy</button> -->
-          <button class="btn btn-danger">Sell</button>
-        </td>
+        <td class="buy-price"></td>
+        <td class="action"></td>
+        <td class="date"></td>
       </tr>
     </tbody>
   </table>

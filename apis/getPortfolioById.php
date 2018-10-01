@@ -36,7 +36,9 @@
       array_push($portfoliosObj->stocks, (object) [
             id => $row['ticker'],
             qty => $row['total_stock'],
-            price => $row['price']
+            price => $row['price'],
+            action => $row['action'],
+            transaction_date => $row['transaction_date']
           ]);          
     } 
 

@@ -34,7 +34,12 @@ window.App.pages = {
   myAccount: window.App.isLocalHost ? '/pages/accountView.php' : '/~mc332/cs673/pages/accountView.php',
   portfolioView: window.App.isLocalHost ? '/pages/portfolioView.php' : '/~mc332/cs673/pages/portfolioView.php',
   stockView: window.App.isLocalHost ? '/pages/stockView.php' : '/~mc332/cs673/pages/stockView.php',
-  login: window.App.isLocalHost ? '/' : '/~mc332/cs673/'
+  login: window.App.isLocalHost ? '/' : '/~mc332/cs673/',
+  portfolioTransactionView: function () {
+    window.location.href = window.App.isLocalHost
+      ? '/pages/portfolioTransactionView.php' + window.location.search
+      : '/~mc332/cs673/pages/portfolioTransactionView.php' + window.location.search
+  }
 }
 
 

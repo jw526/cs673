@@ -10,7 +10,8 @@ window.App = window.App || {};
   // This will expose the user controller
   App.Stocks = {
     buyStock: _buyStock,
-    getStockInfo: _getStockInfo
+    getStockInfo: _getStockInfo,
+    aggregate: _aggregate
   }
 
 
@@ -22,11 +23,10 @@ window.App = window.App || {};
     $.ajax(window.App.endpoints.buyStock, {
       method: 'post',
       success: function (data) {
-        // $('#view-stock-modal').modal('toggle');
-        // $("#stock-modal-title").html('');
-        // $("#search-stock-price").html('');
-        // window.App.Portfolio.loadPortfolioById();
-        window.location.reload();
+        $('#view-stock-modal').modal('toggle');
+        $("#stock-modal-title").html('');
+        $("#search-stock-price").html('');
+        window.App.Portfolio.loadPortfolioById();
       },
       data: {
         portfolio_id: porfolioId,
@@ -75,5 +75,67 @@ window.App = window.App || {};
     });
   }
 
+
+  function _aggregate(stocks) {
+    let stocksMap = {};
+
+    stocks.forEach(stock => {
+      if (!stocksMap[stock.id]) {
+        stocksMap[stock.id] = { }
+      }
+
+      if (!stocksMap[stock.id][stock.action]) {
+        stocksMap[stock.id][stock.action] = [];
+      }
+
+      stocksMap[stock.id][stock.action].push(stock);
+    });
+
+    let keys = Object.keys(stocksMap);
+    let aggregatedStocks = [];
+
+    for (let index = 0; index < keys.length; index++) {
+      let stock = keys[index];
+
+      let totalQtyBought = stocksMap[stock]['buy']
+        ? stocksMap[stock]['buy']
+            .map(stock => stock.qty)
+            .reduce((prev, next) => parseFloat(prev) + parseFloat(next))
+        : 0;
+
+      let totalPriceBought = stocksMap[stock]['buy']
+        ? stocksMap[stock]['buy']
+            .reduce(function(prev, current) {
+              let currentBought = parseFloat(current.qty) * parseFloat(current.price);
+              return prev + currentBought;
+            }, 0)
+        : 0;
+
+      let totalQtySold = stocksMap[stock]['sell']
+        ? stocksMap[stock]['sell']
+          .map(stock => stock.qty)
+          .reduce((prev, next) => parseFloat(prev) + parseFloat(next))
+        : 0;
+
+      let totalPriceSold = stocksMap[stock]['sell']
+        ? stocksMap[stock]['sell']
+          .reduce(function (prev, current) {
+            let currentBought = parseFloat(current.qty) * parseFloat(current.price);
+            return prev + currentBought;
+          }, 0)
+        : 0;
+
+      aggregatedStocks.push({
+        id: stock,
+        qty: totalQtyBought - totalQtySold,
+        totalSpent: totalPriceBought - totalPriceSold
+      });
+
+    }
+
+    console.log(stocksMap);
+    console.log(aggregatedStocks);
+    return aggregatedStocks;
+  }
 })(window.App)
 

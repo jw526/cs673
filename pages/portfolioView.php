@@ -32,7 +32,7 @@
         <td class="buy-price"></td>
         <td class="total-value"></td>
         <td class="actions">
-          <button class="btn btn-success">Buy</button>
+          <!-- <button class="btn btn-success">Buy</button> -->
           <button class="btn btn-danger">Sell</button>
         </td>
       </tr>

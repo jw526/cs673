@@ -178,9 +178,9 @@ window.App = window.App || {};
       template.removeAttr('id');
 
 
-      template.on('click', function (params) {
-        window.location.href = window.App.pages.stockView + '?id=' + portfolio.id;
-      });
+      // template.on('click', function (params) {
+      //   window.location.href = window.App.pages.stockView + '?id=' + portfolio.id;
+      // });
 
       //append to table
       table.append(template);

@@ -20,17 +20,17 @@
       <tr>
         <th scope="col">Ticker</th>
         <th scope="col">Quantity</th>
-        <th scope="col">Profit</th>
-        <th scope="col">Current Price</th>
+        <th scope="col">Buy Price</th>
+        <th scope="col">Total Spent</th>
         <th scope="col">Actions</th>
       </tr>
     </thead>
     <tbody id="portfolio-table-body">
       <tr id="portfolio-row-template" class="template portfolio-row">
-        <th class="id"> APPL</th>
-        <td class="qty"> 32</td>
-        <td class="profit"> $323,432</td>
-        <td class="currentPrice"> $200</td>
+        <th class="id"></th>
+        <td class="qty"></td>
+        <td class="buy-price"></td>
+        <td class="total-value"></td>
         <td class="actions">
           <button class="btn btn-success">Buy</button>
           <button class="btn btn-danger">Sell</button>

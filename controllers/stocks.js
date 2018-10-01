@@ -22,10 +22,11 @@ window.App = window.App || {};
     $.ajax(window.App.endpoints.buyStock, {
       method: 'post',
       success: function (data) {
-        $('#view-stock-modal').modal('toggle');
-        $("#stock-modal-title").html('');
-        $("#search-stock-price").html('');
-        alert('transaction complete');
+        // $('#view-stock-modal').modal('toggle');
+        // $("#stock-modal-title").html('');
+        // $("#search-stock-price").html('');
+        // window.App.Portfolio.loadPortfolioById();
+        window.location.reload();
       },
       data: {
         portfolio_id: porfolioId,

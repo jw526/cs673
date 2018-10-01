@@ -170,8 +170,8 @@ window.App = window.App || {};
       // Set Data
       template.children('.id').html(portfolio.id);
       template.children('.qty').html(portfolio.qty);
-      template.children('.profit').html(portfolio.profit);
-      template.children('.currentPrice').html(portfolio.currentPrice);
+      template.children('.buy-price').html('$' + portfolio.price);
+      template.children('.total-value').html('$' + (portfolio.price * portfolio.qty));
 
       // Remove not needed attributes
       template.removeClass('template');

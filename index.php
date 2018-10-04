@@ -21,7 +21,7 @@
   </form>
 
   <?php include('./pages/partials/footer.php'); ?>
-  <script>
+  <script type="text/javascript">
     window.App.init.LoginScreen();
   </script>
 </body>

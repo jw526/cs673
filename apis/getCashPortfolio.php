@@ -5,7 +5,7 @@
 
 
   $sql = "
-      SELECT SUM(cash_amount) AS total_cash,
+      SELECT cash_amount,
             cash_action,
             DATE_FORMAT(cash_timestamp, '%c-%d-%Y %H:%i:%S')
         FROM cash
@@ -17,14 +17,17 @@
   $result = mysqli_query($dbc, $sql);
 
 
-  // Convert To JSON and send back
-  $portfoliosObj = (object) [
-      'totalCash' => 0
-  ];
+    // Convert To JSON and send back
+    $portfoliosObj = (object) [
+        'cashTransactions' => [ ]
+    ];
 
-  while($row = mysqli_fetch_assoc($result)) {
-    $portfoliosObj->totalCash = $row['total_cash'];        
-  } 
+    while($row = mysqli_fetch_assoc($result)) {
+      array_push($portfoliosObj->cashTransactions, (object) [
+            cash_amount => $row['cash_amount'],
+            cash_action => $row['cash_action']
+          ]);          
+    }
 
 
 

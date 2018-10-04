@@ -3,13 +3,22 @@
  * @summary This is the main js will that will initalize the App name space
  */
 
+window.onerror = function (a, b , c ,d) {
+  alert("ERROR!", a, b, c, d);
+  console.log(a, b, c, d);
+}
+
 // Init App..
 window.App = window.App || {};
 window.App.datalayer = {
   selectedPortfolioId: null, // the currently selected PortfolioId
   searchStockData: {
-
-  }
+    stock_market: null,
+    ticker: null,
+    company_name: null,
+    price: null
+  },
+  currentPortfolioCash: 0
 };
 
 window.App.isLocalHost = window.location.href.indexOf('~mc332') === -1;
@@ -20,6 +29,7 @@ window.App.endpoints = {
   addCashPortfolio: window.App.isLocalHost ? '/apis/addCashPortfolio.php' : '/~mc332/cs673/apis/addCashPortfolio.php',
   buyStock: window.App.isLocalHost ? '/apis/buyStock.php' : '/~mc332/cs673/apis/buyStock.php',
   getCashPortfolio: window.App.isLocalHost ? '/apis/getCashPortfolio.php' : '/~mc332/cs673/apis/getCashPortfolio.php',
+  investeCashPortfolio: window.App.isLocalHost ? '/apis/investeCashPortfolio.php' : '/~mc332/cs673/apis/investeCashPortfolio.php',
   addNewPortfolio: window.App.isLocalHost ? '/apis/addNewPortfolio.php' : '/~mc332/cs673/apis/addNewPortfolio.php',
   deletePortfolio: window.App.isLocalHost ? '/apis/deletePortfolio.php' : '/~mc332/cs673/apis/deletePortfolio.php',
   logout: window.App.isLocalHost ? '/apis/logout.php' : '/~mc332/cs673/apis/logout.php',
@@ -63,6 +73,8 @@ function initMyAccount() {
   ]);
 
   $("#logout-button").on('click', window.App.User.logout);
+
+
 }
 
 function initMyPortfolio() {

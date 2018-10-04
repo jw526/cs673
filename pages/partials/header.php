@@ -46,7 +46,7 @@
               <h4>Price $<span id="search-stock-price"></span></h4>
             </div>
 
-            <div class="input-group mb-3">
+            <!-- <div class="input-group mb-3">
               <select class="custom-select" id="portfolio-list-for-buy">
                 <option selected>Choose...</option>
                 <option value="1">One</option>
@@ -56,7 +56,7 @@
               <div class="input-group-append">
                 <label class="input-group-text" for="inputGroupSelect02">Portfolio</label>
               </div>
-            </div>
+            </div> -->
 
 
             <div class="input-group mb-3">

@@ -31,8 +31,8 @@ var dow30 = [
   'WBA: Walgreen'
 ];
 
-let categoryDow30 = []
-for (let index = 0; index < dow30.length; index++) {  
+var categoryDow30 = []
+for (var index = 0; index < dow30.length; index++) {  
   categoryDow30.push({ label: dow30[index], category: "Dow 30" });
 }
 
@@ -89,7 +89,7 @@ var indiaStocks = [
   'YES Bank',
 ];
 
-let categoryIndiaStocks = []
-for (let index = 0; index < indiaStocks.length; index++) {
+var categoryIndiaStocks = []
+for (var index = 0; index < indiaStocks.length; index++) {
   categoryIndiaStocks.push({ label: indiaStocks[index], category: "India Nifty Fifty" });
 }

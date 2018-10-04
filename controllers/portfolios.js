@@ -17,25 +17,34 @@ window.App = window.App || {};
     toggleDeleteModal: _toggleDeleteModal,
     addCashPortfolio: _addCashPortfolio,
     getCashPortfolio: _getCashPortfolio,
+    investCashPortfolio: _investCashPortfolio,
     getPortfoliosForBuyModal: _getPortfoliosForBuyModal
   }
 
 
 
   function _getCashPortfolio() {
-    let portfolioId = null;
-
-    try {
-      portfolioId = (new URLSearchParams(window.location.search)).get('id');
-    } catch (ex) {
-      console.error('Most Likly IE browser');
-      portfolioId = window.location.search.split('id')[1].split('&')[0].replace('=', '');
-    }
+    var portfolioId = window.getCurrentPortfolioId();
 
     $.ajax(window.App.endpoints.getCashPortfolio, {
       method: 'post',
       success: function (data) {
-        $("#cash-account-balance").html(data.totalCash || 0);
+        var transactions = data.cashTransactions;
+        var totalCashLeft = 0;
+
+        for (var index = 0; index < transactions.length; index++) {
+          const transaction = transactions[index];
+          if (transaction.cash_action == "add") {
+            totalCashLeft += parseFloat(transaction.cash_amount);
+          } else {
+            totalCashLeft -= parseFloat(transaction.cash_amount);
+          }
+        }
+
+
+
+        window.App.datalayer.currentPortfolioCash = totalCashLeft || 0;
+        $("#cash-account-balance").html(totalCashLeft || 0);
       },
       data: {
         portfolioId: portfolioId
@@ -43,10 +52,23 @@ window.App = window.App || {};
     });
   }
 
+  function _investCashPortfolio(amount) {
+    var portfolioId = window.getCurrentPortfolioId();
+
+    $.ajax(window.App.endpoints.investeCashPortfolio, {
+      method: 'post',
+      success: _getCashPortfolio,
+      data: {
+        portfolioId: portfolioId,
+        cashAmount: amount
+      }
+    });
+  }
+
 
   function _addCashPortfolio(element) {
     var amount = $("#add-cash-amount").val();
-    let portfolioId = null;
+    var portfolioId = null;
 
     try {
       portfolioId = (new URLSearchParams(window.location.search)).get('id');
@@ -142,14 +164,7 @@ window.App = window.App || {};
 
 
   function _loadPortfolioById(event) {
-    let portfolioId = null;
-
-    try {
-      portfolioId = (new URLSearchParams(window.location.search)).get('id');
-    } catch(ex) {
-      console.error('Most Likly IE browser');
-      portfolioId = window.location.search.split('id')[1].split('&')[0].replace('=', '');
-    }
+    var portfolioId = window.getCurrentPortfolioId();
 
     _getCashPortfolio();
 
@@ -162,20 +177,20 @@ window.App = window.App || {};
 
   // Note i am doing stocks and transaction table in a single function, we may want to move this out if it gets to complicated
   function renderStocksInPortfolio (res) {
-    let table = $("#portfolio-table-body");
-    let temp = $("#portfolio-row-template").clone(true);
+    var table = $("#portfolio-table-body");
+    var temp = $("#portfolio-row-template").clone(true);
     table.html('');
     table.append(temp);
 
-    let isTransactionsView = window.location.href.indexOf(window.App.pages.portfolioView) === -1;
+    var isTransactionsView = window.location.href.indexOf(window.App.pages.portfolioView) === -1;
 
-    let stocks = isTransactionsView
+    var stocks = isTransactionsView
       ? res.stocks
       : window.App.Stocks.aggregate(res.stocks)
 
     stocks.forEach(portfolio => {
       // Clone template
-      let template = $("#portfolio-row-template").clone(true);
+      var template = $("#portfolio-row-template").clone(true);
 
       // Set Data
       template.children('.id').html(portfolio.id);
@@ -206,15 +221,15 @@ window.App = window.App || {};
    * @summary this will render all portfolios that the user has and renders it to the table
    */
   function renderPortfolioRows(res) {
-    let table = $("#portfolio-table-body");
-    let temp = $("#portfolio-row-template").clone(true); 
+    var table = $("#portfolio-table-body");
+    var temp = $("#portfolio-row-template").clone(true); 
 
     table.html('');
     table.append(temp);
 
     res.portfolios.forEach(portfolio => {
       // Clone template
-      let template = $("#portfolio-row-template").clone(true);
+      var template = $("#portfolio-row-template").clone(true);
 
       // Set Data
       template.children('.number').html(portfolio.id);
@@ -252,3 +267,11 @@ window.App = window.App || {};
 
 })(window.App)
 
+function getCurrentPortfolioId () {
+  try {
+    return (new URLSearchParams(window.location.search)).get('id');
+  } catch (ex) {
+    console.error('Most Likly IE browser');
+    return window.location.search.split('id')[1].split('&')[0].replace('=', '');
+  }
+}

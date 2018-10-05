@@ -245,6 +245,11 @@ window.App = window.App || {};
     for (var index = 0; index < res.portfolios.length; index++) {
       var portfolio = res.portfolios[index];
       // Clone template
+      render(portfolio);
+    }
+
+
+    function render(portfolio) {
       var template = $("#portfolio-row-template").clone(true);
 
       // Set Data

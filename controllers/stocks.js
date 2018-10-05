@@ -87,7 +87,7 @@ window.App = window.App || {};
         ticker: myStock.id,
         company_name: myStock.company_name,
         quantity: amountToSell,
-        price: totalValue
+        price: currentPrice
       }
     });
   }

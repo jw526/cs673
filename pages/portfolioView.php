@@ -19,7 +19,6 @@
       <tr>
         <th scope="col">Ticker</th>
         <th scope="col">Quantity</th>
-        <th scope="col">Total Spent</th>
         <th scope="col">Current Value</th>
         <th scope="col">Gain/Lost</th>
         <th scope="col">Actions</th>
@@ -29,23 +28,22 @@
       <tr id="portfolio-row-template" class="template portfolio-row">
         <th class="id"></th>
         <td class="qty"></td>
-        <td class="total-spent"></td>
         <td class="current-value">?</td>
         <td class="gain-lost">?</td>
         <td class="actions">
           <!-- <button class="btn btn-success">Buy</button> -->
-          <button class="btn btn-danger">Sell</button>
+          <button class="btn btn-danger" onclick="window.App.Stocks.toggleSellStockModal(this)">Sell</button>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <!-- Add New Portfolio Modal -->
+  <!-- Add Cash to Portfolio Modal -->
   <div class="modal" tabindex="-1" role="dialog" id="add-cash-modal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Add Cash Tp Portfolio</h5>
+          <h5 class="modal-title">Add Cash To Portfolio</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -60,7 +58,33 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" onclick="window.App.Portfolio.addCashPortfolio(this)">Add Cash</button>
+          <button type="button" class="btn btn-primary" onclick="window.App.Portfolio.addCashPortfolio(null)">Add Cash</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sell Stock from Portfolio Modal -->
+  <div class="modal" tabindex="-1" role="dialog" id="sell-stock-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Sell Stock?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="stock-name-to-sell"></span>
+            </div>
+            <input id="amount-of-stock-to-sell" type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="window.App.Stocks.sellStock()">Sell Stock!</button>
         </div>
       </div>
     </div>

@@ -66,8 +66,15 @@ window.App = window.App || {};
   }
 
 
-  function _addCashPortfolio(element) {
-    var amount = $("#add-cash-amount").val();
+  function _addCashPortfolio(totalValue, backgroundJob) {
+    var amount
+
+    if (totalValue) {
+      amount = totalValue;
+    } else {
+      amount = $("#add-cash-amount").val();
+    }
+    
     var portfolioId = null;
 
     try {
@@ -84,7 +91,11 @@ window.App = window.App || {};
         method: 'post',
         success: function () {
           _loadPortfolioById();
-          $('#add-cash-modal').modal('toggle');
+          
+          if (!backgroundJob) {
+            $('#add-cash-modal').modal('toggle');
+          }
+          
         },
         data: {
           cashAmount: amount,
@@ -188,6 +199,9 @@ window.App = window.App || {};
       ? res.stocks
       : window.App.Stocks.aggregate(res.stocks)
 
+    // store stocks for latter use
+    window.App.datalayer.currentStocksForCurrentView = stocks;
+      
     stocks.forEach(portfolio => {
       // Clone template
       var template = $("#portfolio-row-template").clone(true);

@@ -24,9 +24,6 @@
       <tr>
         <th scope="col">#</th>
         <th scope="col">Name</th>
-        <th scope="col">Cash%</th>
-        <th scope="col">Stock%</th>
-        <th scope="col">Total Assets</th>
         <th scope="col">Actions</th>
       </tr>
     </thead>
@@ -34,9 +31,6 @@
       <tr id="portfolio-row-template" class="template portfolio-row">
         <th class="number"></th>
         <td class="name"></td>
-        <td class="cash"></td>
-        <td class="stock"></td>
-        <td class="total"></td>
         <td class="delete">
           <button class="btn btn-danger" onclick="window.App.Portfolio.toggleDeleteModal(this)">delete</button>
         </td>

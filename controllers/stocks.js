@@ -10,6 +10,8 @@ window.App = window.App || {};
   // This will expose the user controller
   App.Stocks = {
     buyStock: _buyStock,
+    sellStock: _sellStock,
+    toggleSellStockModal: _toggleSellStockModal,
     getStockInfo: _getStockInfo,
     aggregate: _aggregate
   }
@@ -20,7 +22,7 @@ window.App = window.App || {};
     var porfolioId = window.getCurrentPortfolioId();
     var qty = $("#stock-buy-qty").val();
 
-    let totalCost = qty * datalayer.searchStockData.price;
+    var totalCost = qty * datalayer.searchStockData.price;
 
     if (totalCost > datalayer.currentPortfolioCash) {
       return alert('Please add more cash!');
@@ -44,6 +46,60 @@ window.App = window.App || {};
         price: window.App.datalayer.searchStockData.price
       }
     });
+  }
+
+  function _sellStock () {
+    var stocksInPortfolio = window.App.datalayer.currentStocksForCurrentView;
+    var selectedStockId = window.App.datalayer.selectedStockId
+    var amountToSell = $('#amount-of-stock-to-sell').val();
+
+    var myStock = {};
+    console.log('NOTE WE NEED REAL WORLD VALUE');
+    var currentPrice = 22;
+
+    for (let index = 0; index < stocksInPortfolio.length; index++) {
+      const stock = stocksInPortfolio[index];
+      if (stock.id == selectedStockId) {
+        myStock = stock;
+      }
+    }
+
+    if (myStock.qty < amountToSell) {
+      console.log('You only have ' + myStock.qty)
+      return alert('You only have ' + myStock.qty)
+    }
+
+
+    var datalayer = window.App.datalayer;
+    var porfolioId = window.getCurrentPortfolioId();
+    var totalValue = amountToSell * currentPrice;
+
+    $.ajax(window.App.endpoints.sellStock, {
+      method: 'post',
+      success: function (data) {
+        $('#sell-stock-modal').modal('toggle');
+        window.App.Portfolio.loadPortfolioById();
+        window.App.Portfolio.addCashPortfolio(totalValue, true);
+      },
+      data: {
+        portfolio_id: porfolioId,
+        stock_market: myStock.stock_market,
+        ticker: myStock.id,
+        company_name: myStock.company_name,
+        quantity: amountToSell,
+        price: totalValue
+      }
+    });
+  }
+
+  function _toggleSellStockModal(element) {
+    var selectedStockId = $($(element).parent().parent().children('.id')[0]).html()
+
+    window.App.datalayer.selectedStockId = selectedStockId;
+
+    
+    $('#stock-name-to-sell').html("How Much " + selectedStockId + " to sell?");
+    $('#sell-stock-modal').modal('toggle');
   }
 
   function _getStockInfo(event) {
@@ -86,9 +142,24 @@ window.App = window.App || {};
   function _aggregate(stocks) {
     var stocksMap = {};
 
+    /*
+      Create Map
+      {
+        ticketId: {
+          buy: [],
+          sell: [],
+          invest: [],
+          company_name
+          stock_market
+        }
+      }
+    */
     stocks.forEach(stock => {
       if (!stocksMap[stock.id]) {
-        stocksMap[stock.id] = { }
+        stocksMap[stock.id] = {
+          company_name: stock.company_name,
+          stock_market: stock.stock_market
+        }
       }
 
       if (!stocksMap[stock.id][stock.action]) {
@@ -135,13 +206,13 @@ window.App = window.App || {};
       aggregatedStocks.push({
         id: stock,
         qty: totalQtyBought - totalQtySold,
-        totalSpent: totalPriceBought - totalPriceSold
+        totalSpent: totalPriceBought - totalPriceSold,
+        company_name: stocksMap[stock].company_name,
+        stock_market: stocksMap[stock].stock_market
       });
 
     }
 
-    console.log(stocksMap);
-    console.log(aggregatedStocks);
     return aggregatedStocks;
   }
 })(window.App)

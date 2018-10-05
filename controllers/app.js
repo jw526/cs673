@@ -11,6 +11,7 @@ window.onerror = function (a, b , c ,d) {
 // Init App..
 window.App = window.App || {};
 window.App.datalayer = {
+  selectedStockId: null, // on portfolio view page the stock you selected to sell
   selectedPortfolioId: null, // the currently selected PortfolioId
   searchStockData: {
     stock_market: null,
@@ -18,25 +19,29 @@ window.App.datalayer = {
     company_name: null,
     price: null
   },
+  currentStocksForCurrentView: [], // on portfolio view page these are all the stocks we are seeing
   currentPortfolioCash: 0
 };
 
 window.App.isLocalHost = window.location.href.indexOf('~mc332') === -1;
 
+var prefix = window.App.isLocalHost ? '' : '/~mc332/cs673';
+
 // Endpoints will go here
 window.App.endpoints = {
-  login: window.App.isLocalHost ? '/apis/login.php' : '/~mc332/cs673/apis/login.php',
-  addCashPortfolio: window.App.isLocalHost ? '/apis/addCashPortfolio.php' : '/~mc332/cs673/apis/addCashPortfolio.php',
-  buyStock: window.App.isLocalHost ? '/apis/buyStock.php' : '/~mc332/cs673/apis/buyStock.php',
-  getCashPortfolio: window.App.isLocalHost ? '/apis/getCashPortfolio.php' : '/~mc332/cs673/apis/getCashPortfolio.php',
-  investeCashPortfolio: window.App.isLocalHost ? '/apis/investeCashPortfolio.php' : '/~mc332/cs673/apis/investeCashPortfolio.php',
-  addNewPortfolio: window.App.isLocalHost ? '/apis/addNewPortfolio.php' : '/~mc332/cs673/apis/addNewPortfolio.php',
-  deletePortfolio: window.App.isLocalHost ? '/apis/deletePortfolio.php' : '/~mc332/cs673/apis/deletePortfolio.php',
-  logout: window.App.isLocalHost ? '/apis/logout.php' : '/~mc332/cs673/apis/logout.php',
-  getUserPortfolio: window.App.isLocalHost ? '/apis/getUserPortfolios.php' : '/~mc332/cs673/apis/getUserPortfolios.php',
-  getPortfolioById: window.App.isLocalHost ? '/apis/getPortfolioById.php' : '/~mc332/cs673/apis/getPortfolioById.php',
-  getUserInfo: window.App.isLocalHost ? '/apis/getUserInfo.php' : '/~mc332/cs673/apis/getUserInfo.php',
-  getStockInfo: window.App.isLocalHost ? '/apis/getStockInfo.php' : '/~mc332/cs673/apis/getStockInfo.php'
+  login: prefix + '/apis/login.php',
+  addCashPortfolio: prefix + '/apis/addCashPortfolio.php',
+  buyStock: prefix + '/apis/buyStock.php',
+  sellStock: prefix + '/apis/sellStock.php',
+  getCashPortfolio: prefix + '/apis/getCashPortfolio.php',
+  investeCashPortfolio: prefix + '/apis/investeCashPortfolio.php',
+  addNewPortfolio: prefix + '/apis/addNewPortfolio.php',
+  deletePortfolio: prefix + '/apis/deletePortfolio.php',
+  logout: prefix + '/apis/logout.php',
+  getUserPortfolio: prefix + '/apis/getUserPortfolios.php',
+  getPortfolioById: prefix + '/apis/getPortfolioById.php',
+  getUserInfo: prefix + '/apis/getUserInfo.php',
+  getStockInfo: prefix + '/apis/getStockInfo.php'
 }
 
 //All Pages in out app

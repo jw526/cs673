@@ -11,6 +11,7 @@
             transactions.quantity AS total_stock,
             transactions.stock_market AS stock_market,
             transactions.ticker AS ticker,
+            transactions.stock_market AS stock_market,
             transactions.company_name AS company_name,
             transactions.price AS price,
             transactions.transaction_action AS action,
@@ -38,6 +39,8 @@
             qty => $row['total_stock'],
             price => $row['price'],
             action => $row['action'],
+            company_name => $row['company_name'],
+            stock_market => $row['stock_market'],
             transaction_date => $row['transaction_date']
           ]);          
     } 

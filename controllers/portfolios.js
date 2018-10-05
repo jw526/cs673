@@ -112,7 +112,7 @@ window.App = window.App || {};
 
     // This is a HACK so we dont redirect on row click 
     window.isDontRedirect = true;
-    setTimeout(() => {
+    setTimeout(function() {
       window.isDontRedirect = false;
     }, 100);
     // Hack above
@@ -201,8 +201,9 @@ window.App = window.App || {};
 
     // store stocks for latter use
     window.App.datalayer.currentStocksForCurrentView = stocks;
-      
-    stocks.forEach(portfolio => {
+    
+    for (let index = 0; index < stocks.length; index++) {
+      const portfolio = stocks[index];
       // Clone template
       var template = $("#portfolio-row-template").clone(true);
 
@@ -224,8 +225,8 @@ window.App = window.App || {};
       // });
 
       //append to table
-      table.append(template);
-    });
+      table.append(template);  
+    }
   }
 
 
@@ -241,7 +242,8 @@ window.App = window.App || {};
     table.html('');
     table.append(temp);
 
-    res.portfolios.forEach(portfolio => {
+    for (let index = 0; index < res.portfolios.length; index++) {
+      const portfolio = res.portfolios[index];
       // Clone template
       var template = $("#portfolio-row-template").clone(true);
 
@@ -264,20 +266,20 @@ window.App = window.App || {};
       });
 
       //append to table
-      table.append(template);
-    });
+      table.append(template); 
+    }
   }
 
 
-  function renerPortfoliosOnModal (res) {
-    var selectFeild = $("#portfolio-list-for-buy");
-    selectFeild.html('');
+  // function renerPortfoliosOnModal (res) {
+  //   var selectFeild = $("#portfolio-list-for-buy");
+  //   selectFeild.html('');
 
-    selectFeild.append("<option selected>Choose...</option>");
-    res.portfolios.forEach(portfolio => {
-      selectFeild.append("<option value=" + portfolio.id + ">" + portfolio.name + "</option>");
-    });
-  }
+  //   selectFeild.append("<option selected>Choose...</option>");
+  //   res.portfolios.forEach(function(portfolio) {
+  //     selectFeild.append("<option value=" + portfolio.id + ">" + portfolio.name + "</option>");
+  //   });
+  // }
 
 })(window.App)
 

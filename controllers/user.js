@@ -45,9 +45,11 @@ window.App = window.App || {};
       if (!data.isUserRegistered) {
         window.location.href = window.App.pages.login;
       } else {
-        callbacks.forEach(callback => {
+
+        for (let index = 0; index < callbacks.length; index++) {
+          const callback = callbacks[index];
           callback();
-        });
+        }
       }
     }
   }

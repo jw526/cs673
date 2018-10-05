@@ -46,8 +46,8 @@ window.App = window.App || {};
         window.location.href = window.App.pages.login;
       } else {
 
-        for (let index = 0; index < callbacks.length; index++) {
-          const callback = callbacks[index];
+        for (var index = 0; index < callbacks.length; index++) {
+          var callback = callbacks[index];
           callback();
         }
       }

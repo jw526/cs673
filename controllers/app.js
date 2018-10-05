@@ -69,7 +69,7 @@ App.init = {
 // -- initalization functions --
 function allPagesInit (params) {
   $("#search-stock-form").on('submit', App.Stocks.getStockInfo);
-  window.App.Portfolio.getPortfoliosForBuyModal();
+  // window.App.Portfolio.getPortfoliosForBuyModal();
 }
 
 function initMyAccount() {

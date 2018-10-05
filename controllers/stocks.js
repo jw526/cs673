@@ -57,8 +57,8 @@ window.App = window.App || {};
     console.log('NOTE WE NEED REAL WORLD VALUE');
     var currentPrice = 22;
 
-    for (let index = 0; index < stocksInPortfolio.length; index++) {
-      const stock = stocksInPortfolio[index];
+    for (var index = 0; index < stocksInPortfolio.length; index++) {
+      var stock = stocksInPortfolio[index];
       if (stock.id == selectedStockId) {
         myStock = stock;
       }
@@ -154,7 +154,9 @@ window.App = window.App || {};
         }
       }
     */
-    stocks.forEach(stock => {
+    for (var index = 0; index < stocks.length; index++) {
+      var stock = stocks[index];
+
       if (!stocksMap[stock.id]) {
         stocksMap[stock.id] = {
           company_name: stock.company_name,
@@ -167,53 +169,64 @@ window.App = window.App || {};
       }
 
       stocksMap[stock.id][stock.action].push(stock);
-    });
+    }
 
     var keys = Object.keys(stocksMap);
     var aggregatedStocks = [];
 
+    // Use map to create an array of stocks
     for (var index = 0; index < keys.length; index++) {
-      var stock = keys[index];
+      var stockId = keys[index];
 
-      var totalQtyBought = stocksMap[stock]['buy']
-        ? stocksMap[stock]['buy']
-            .map(stock => stock.qty)
-            .reduce((prev, next) => parseFloat(prev) + parseFloat(next))
-        : 0;
+      var totalQtyBought = getTotalStockBoughtGivenTransactions(stocksMap, stockId);
+      var totalQtySold = getTotalStockSoldGivenTransactions(stocksMap, stockId);
 
-      var totalPriceBought = stocksMap[stock]['buy']
-        ? stocksMap[stock]['buy']
-            .reduce(function(prev, current) {
-              var currentBought = parseFloat(current.qty) * parseFloat(current.price);
-              return prev + currentBought;
-            }, 0)
-        : 0;
+      // only show stocks we own
+      if (totalQtyBought - totalQtySold > 0) {
+        aggregatedStocks.push({
+          id: stockId,
+          qty: totalQtyBought - totalQtySold,
+          company_name: stocksMap[stockId].company_name,
+          stock_market: stocksMap[stockId].stock_market
+        });
+      }
 
-      var totalQtySold = stocksMap[stock]['sell']
-        ? stocksMap[stock]['sell']
-          .map(stock => stock.qty)
-          .reduce((prev, next) => parseFloat(prev) + parseFloat(next))
-        : 0;
-
-      var totalPriceSold = stocksMap[stock]['sell']
-        ? stocksMap[stock]['sell']
-          .reduce(function (prev, current) {
-            var currentBought = parseFloat(current.qty) * parseFloat(current.price);
-            return prev + currentBought;
-          }, 0)
-        : 0;
-
-      aggregatedStocks.push({
-        id: stock,
-        qty: totalQtyBought - totalQtySold,
-        totalSpent: totalPriceBought - totalPriceSold,
-        company_name: stocksMap[stock].company_name,
-        stock_market: stocksMap[stock].stock_market
-      });
 
     }
 
     return aggregatedStocks;
   }
 })(window.App)
+
+
+function getTotalStockBoughtGivenTransactions(stocksMap, stockId) {
+  return getTotalStockQtyGivenTransactions('buy', stocksMap, stockId);
+}
+
+function getTotalStockSoldGivenTransactions(stocksMap, stockId) {
+  return getTotalStockQtyGivenTransactions('sell', stocksMap, stockId);
+}
+
+function getTotalStockQtyGivenTransactions(type, stocksMap, stockId) {
+  var qty = 0;
+
+  try {
+    var stocksBought = stocksMap[stockId][type];
+
+    if (!stocksBought) {
+      return qty;
+    }
+
+    for (var index = 0; index < stocksBought.length; index++) {
+      var stock = stocksBought[index];
+      qty += parseFloat(stock.qty);
+    }
+
+  } catch (error) {
+    alert(error);
+    console.log(error);
+  }
+
+  return qty;
+}
 

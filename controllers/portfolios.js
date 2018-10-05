@@ -17,8 +17,8 @@ window.App = window.App || {};
     toggleDeleteModal: _toggleDeleteModal,
     addCashPortfolio: _addCashPortfolio,
     getCashPortfolio: _getCashPortfolio,
-    investCashPortfolio: _investCashPortfolio,
-    getPortfoliosForBuyModal: _getPortfoliosForBuyModal
+    investCashPortfolio: _investCashPortfolio
+    //getPortfoliosForBuyModal: _getPortfoliosForBuyModal
   }
 
 
@@ -33,7 +33,7 @@ window.App = window.App || {};
         var totalCashLeft = 0;
 
         for (var index = 0; index < transactions.length; index++) {
-          const transaction = transactions[index];
+          var transaction = transactions[index];
           if (transaction.cash_action == "add") {
             totalCashLeft += parseFloat(transaction.cash_amount);
           } else {
@@ -161,17 +161,17 @@ window.App = window.App || {};
       method: 'post',
       success: function(data) {
         renderPortfolioRows(data);
-        renerPortfoliosOnModal(data);
+        // renerPortfoliosOnModal(data);
       }
     });
   }
 
-  function _getPortfoliosForBuyModal() {
-    $.ajax(window.App.endpoints.getUserPortfolio, {
-      method: 'post',
-      success: renerPortfoliosOnModal
-    });
-  }
+  // function _getPortfoliosForBuyModal() {
+  //   $.ajax(window.App.endpoints.getUserPortfolio, {
+  //     method: 'post',
+  //     success: renerPortfoliosOnModal
+  //   });
+  // }
 
 
   function _loadPortfolioById(event) {
@@ -202,8 +202,8 @@ window.App = window.App || {};
     // store stocks for latter use
     window.App.datalayer.currentStocksForCurrentView = stocks;
     
-    for (let index = 0; index < stocks.length; index++) {
-      const portfolio = stocks[index];
+    for (var index = 0; index < stocks.length; index++) {
+      var portfolio = stocks[index];
       // Clone template
       var template = $("#portfolio-row-template").clone(true);
 
@@ -242,8 +242,8 @@ window.App = window.App || {};
     table.html('');
     table.append(temp);
 
-    for (let index = 0; index < res.portfolios.length; index++) {
-      const portfolio = res.portfolios[index];
+    for (var index = 0; index < res.portfolios.length; index++) {
+      var portfolio = res.portfolios[index];
       // Clone template
       var template = $("#portfolio-row-template").clone(true);
 

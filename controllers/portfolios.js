@@ -15,6 +15,8 @@ window.App = window.App || {};
     addNewPortfolio: _addNewPortfolio,
     deletePortfolio: _deletePortfolio,
     toggleDeleteModal: _toggleDeleteModal,
+    removeCashPortfolio: _removeCashPortfolio,
+    toggleRemoveCashModal: _toggleRemoveCashModal,
     addCashPortfolio: _addCashPortfolio,
     getCashPortfolio: _getCashPortfolio,
     investCashPortfolio: _investCashPortfolio
@@ -23,8 +25,10 @@ window.App = window.App || {};
 
 
 
-  function _getCashPortfolio() {
-    var portfolioId = window.getCurrentPortfolioId();
+  function _getCashPortfolio(isCashAccount) {
+    var portfolioId = isCashAccount
+      ? 0
+      : window.getCurrentPortfolioId();
 
     $.ajax(window.App.endpoints.getCashPortfolio, {
       method: 'post',
@@ -47,17 +51,19 @@ window.App = window.App || {};
         $("#cash-account-balance").html(totalCashLeft || 0);
       },
       data: {
-        portfolioId: portfolioId
+        portfolioId: portfolioId || 0
       }
     });
   }
 
-  function _investCashPortfolio(amount) {
-    var portfolioId = window.getCurrentPortfolioId();
+  function _investCashPortfolio(amount, isCashAccount) {
+    var portfolioId = isCashAccount
+      ? 0
+      : window.getCurrentPortfolioId();
 
     $.ajax(window.App.endpoints.investeCashPortfolio, {
       method: 'post',
-      success: _getCashPortfolio,
+      success: isCashAccount ? function() {} : _getCashPortfolio,
       data: {
         portfolioId: portfolioId,
         cashAmount: amount
@@ -66,7 +72,15 @@ window.App = window.App || {};
   }
 
 
-  function _addCashPortfolio(totalValue, backgroundJob) {
+  function _removeCashPortfolio () {
+    var amount = $("#remove-cash-amount").val();
+
+    _investCashPortfolio(amount);
+    _addCashPortfolio(amount, true, false, true);    
+    _toggleRemoveCashModal();
+  }
+
+  function _addCashPortfolio(totalValue, backgroundJob, shouldRemoveFromCashAccount, isCashAccount) {
     var amount
 
     if (totalValue) {
@@ -84,6 +98,10 @@ window.App = window.App || {};
       portfolioId = window.location.search.split('id')[1].split('&')[0].replace('=', '');
     }
 
+    if (isCashAccount) {
+      portfolioId = 0;
+    }
+
     if (!amount) {
       return;
     } else {
@@ -92,6 +110,11 @@ window.App = window.App || {};
         success: function () {
           _loadPortfolioById();
           
+
+          if (shouldRemoveFromCashAccount) {
+            _investCashPortfolio(amount, true);
+          }
+
           if (!backgroundJob) {
             $('#add-cash-modal').modal('toggle');
           }
@@ -118,6 +141,10 @@ window.App = window.App || {};
     // Hack above
 
     $('#delete-port-modal').modal('toggle');
+  }
+
+  function _toggleRemoveCashModal() {
+    $('#remove-cash-modal').modal('toggle');
   }
 
   function _addNewPortfolio(event) {

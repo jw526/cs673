@@ -9,7 +9,7 @@
   <!-- Action Bar -->
   <div class="header-button-container">
     <button class="btn btn-primary" onclick="$('#add-cash-modal').modal('toggle')">Add Cash</button>
-    <button class="btn btn-danger">Remove Cash</button>
+    <button class="btn btn-danger" onclick="window.App.Portfolio.toggleRemoveCashModal()">Remove Cash</button>
     <button class="btn btn-success" type="button" onclick="window.App.pages.portfolioTransactionView()">View Transactions</button>
   </div>
 
@@ -58,7 +58,33 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" onclick="window.App.Portfolio.addCashPortfolio(null)">Add Cash</button>
+          <button type="button" class="btn btn-primary" onclick="window.App.Portfolio.addCashPortfolio(null, false, true)">Add Cash</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Remove Cash to Portfolio Modal -->
+  <div class="modal" tabindex="-1" role="dialog" id="remove-cash-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Remove Cash from Portfolio, add to cash account</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="cash-to-remove-from-port">$</span>
+            </div>
+            <input id="remove-cash-amount" type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="window.App.Portfolio.removeCashPortfolio(null, false, true)">Remove Cash</button>
         </div>
       </div>
     </div>

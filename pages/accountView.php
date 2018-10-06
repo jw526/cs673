@@ -9,7 +9,7 @@
     }
   </style>
   <h1 class="center"> My Portfolios</h1>
-  <div class="center">Cash Account Balance: <span id="cash-account-balance">$0</span></div>
+  <div class="center">Cash Account Balance: $<span id="cash-account-balance">0</span></div>
 
   <!-- Action Bar -->
   <div class="header-button-container">

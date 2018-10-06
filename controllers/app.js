@@ -77,7 +77,8 @@ function allPagesInit (params) {
 
 function initMyAccount() {
   window.App.User.getUserBasicInfo([
-    window.App.Portfolio.loadUserPortfolios
+    window.App.Portfolio.loadUserPortfolios,
+    (function () { window.App.Portfolio.getCashPortfolio(0) })
   ]);
 
   $("#logout-button").on('click', window.App.User.logout);

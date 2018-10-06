@@ -4,7 +4,7 @@ $user = "user";
 $pwd = "pwd";
 $database = "db";
 //connect to database
-$conn = new mysqli($server, $user, $pwd, $database) or die("Connection failed: ". mysqli_error());
+$conn = new mysqli($server, $user, $pwd, $database) or die("Connection failed: ". $conn->connect_error);
 $sql = (Select xxx from $portfolioName); //get the total portfolio value
 $totalPortfolioValue = $conn->query($sql);
 

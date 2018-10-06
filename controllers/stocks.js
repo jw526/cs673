@@ -60,7 +60,6 @@ window.App = window.App || {};
     var amountToSell = $('#amount-of-stock-to-sell').val();
 
     var myStock = {};
-    console.log('NOTE WE NEED REAL WORLD VALUE');
     var currentPrice = window.App.datalayer.currentStockPrices[selectedStockId];
 
     for (var index = 0; index < stocksInPortfolio.length; index++) {

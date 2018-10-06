@@ -78,7 +78,7 @@ function allPagesInit (params) {
 function initMyAccount() {
   window.App.User.getUserBasicInfo([
     window.App.Portfolio.loadUserPortfolios,
-    (function () { window.App.Portfolio.getCashPortfolio(0) })
+    (function () { window.App.Portfolio.loadCashAccount() })
   ]);
 
   $("#logout-button").on('click', window.App.User.logout);
@@ -106,4 +106,12 @@ function initLoginScreen() {
       }
     })
   })
+}
+
+function formatPrice(price) {
+  try {
+    return parseFloat(price).toFixed(2);
+  } catch (error) {
+    return price;
+  }
 }

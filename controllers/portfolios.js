@@ -19,36 +19,37 @@ window.App = window.App || {};
     toggleRemoveCashModal: _toggleRemoveCashModal,
     addCashPortfolio: _addCashPortfolio,
     getCashPortfolio: _getCashPortfolio,
-    investCashPortfolio: _investCashPortfolio
+    investCashPortfolio: _investCashPortfolio,
+    loadCashAccount: _loadCashAccount
     //getPortfoliosForBuyModal: _getPortfoliosForBuyModal
   }
 
 
+  function _loadCashAccount() {
+    $.ajax(window.App.endpoints.getCashPortfolio, {
+      method: 'post',
+      success: function (data) {
+        var transactions = data.cashTransactions;
+        var totalCashLeft = getTotalCashByTransaction(transactions);
+        window.App.datalayer.currentPortfolioCash = totalCashLeft || 0;
+        $("#cash-account-balance").html(totalCashLeft || 0);
+      },
+      data: {
+        portfolioId: 0
+      }
+    }); 
+  }
 
-  function _getCashPortfolio(isCashAccount) {
-    var portfolioId = isCashAccount
-      ? 0
-      : window.getCurrentPortfolioId();
+  function _getCashPortfolio() {
+    var portfolioId = window.getCurrentPortfolioId();
 
     $.ajax(window.App.endpoints.getCashPortfolio, {
       method: 'post',
       success: function (data) {
         var transactions = data.cashTransactions;
-        var totalCashLeft = 0;
-
-        for (var index = 0; index < transactions.length; index++) {
-          var transaction = transactions[index];
-          if (transaction.cash_action == "add") {
-            totalCashLeft += parseFloat(transaction.cash_amount);
-          } else {
-            totalCashLeft -= parseFloat(transaction.cash_amount);
-          }
-        }
-
-
-
-        window.App.datalayer.currentPortfolioCash = totalCashLeft || 0;
-        $("#cash-account-balance").html(totalCashLeft || 0);
+        var totalCashLeft = getTotalCashByTransaction(transactions);
+        window.App.datalayer.currentPortfolioCash = formatPrice(totalCashLeft) || 0;
+        $("#cash-account-balance").html(formatPrice(totalCashLeft) || 0);
       },
       data: {
         portfolioId: portfolioId || 0
@@ -324,4 +325,39 @@ function getCurrentPortfolioId () {
     console.error('Most Likly IE browser');
     return window.location.search.split('id')[1].split('&')[0].replace('=', '');
   }
+}
+
+function addToCashAccount(amount) {
+  $.ajax(window.App.endpoints.addCashPortfolio, {
+    method: 'post',
+    data: {
+      cashAmount: amount,
+      portfolioId: 0
+    }
+  });
+}
+
+function removeCashAccount(amount) {
+  $.ajax(window.App.endpoints.investeCashPortfolio, {
+    method: 'post',
+    data: {
+      cashAmount: amount,
+      portfolioId: 0
+    }
+  });
+}
+
+function getTotalCashByTransaction(transactions) {
+  var totalCashLeft = 0;
+
+  for (var index = 0; index < transactions.length; index++) {
+    var transaction = transactions[index];
+    if (transaction.cash_action == "add") {
+      totalCashLeft += parseFloat(transaction.cash_amount);
+    } else {
+      totalCashLeft -= parseFloat(transaction.cash_amount);
+    }
+  }
+
+  return formatPrice(totalCashLeft);
 }

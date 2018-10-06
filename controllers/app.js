@@ -44,7 +44,7 @@ window.App.endpoints = {
   getUserPortfolio: prefix + '/apis/getUserPortfolios.php',
   getPortfolioById: prefix + '/apis/getPortfolioById.php',
   getUserInfo: prefix + '/apis/getUserInfo.php',
-  getStockInfo: prefix + 'https://web.njit.edu/~mc332/webapps8/hello2'
+  getStockInfo: 'https://web.njit.edu/~mc332/webapps8/hello2'
 }
 
 //All Pages in out app

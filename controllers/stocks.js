@@ -130,9 +130,9 @@ window.App = window.App || {};
       // Display Info
       $("#stock-modal-title").html(stock);
       $('#view-stock-modal').modal();
-      $("#search-stock-price").html(parseFloat(price));
+      $("#search-stock-price").html(price);
 
-      window.App.datalayer.searchStockData.price = parseFloat(price);
+      window.App.datalayer.searchStockData.price = price;
     });
 
 
@@ -244,8 +244,8 @@ function renderStockCurrentPrices (arrayOfTickers) {
 
   function render(ticker) {
     _getStockPrice(ticker, function (price) {
-      $("#stock-ticker-" + ticker).html(parseFloat(price));
-      window.App.datalayer.currentStockPrices[ticker] = parseFloat(price);
+      $("#stock-ticker-" + ticker).html(price);
+      window.App.datalayer.currentStockPrices[ticker] = price;
     });
   }
 }
@@ -253,7 +253,9 @@ function renderStockCurrentPrices (arrayOfTickers) {
 
 function _getStockPrice(ticker, callback) {
   $.get(window.App.endpoints.getStockInfo + "?ticket=" + ticker, function (price) {
-    callback(price);
+    var clean = price.replace(/,/g, "");
+    var float = parseFloat(clean).toFixed(2);
+    callback(float);
   });
 }
 

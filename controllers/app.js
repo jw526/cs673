@@ -20,7 +20,10 @@ window.App.datalayer = {
     price: null
   },
   currentStocksForCurrentView: [], // on portfolio view page these are all the stocks we are seeing
-  currentPortfolioCash: 0
+  currentPortfolioCash: 0,
+  currentStockPrices: {
+    
+  }
 };
 
 window.App.isLocalHost = window.location.href.indexOf('~mc332') === -1;
@@ -41,7 +44,7 @@ window.App.endpoints = {
   getUserPortfolio: prefix + '/apis/getUserPortfolios.php',
   getPortfolioById: prefix + '/apis/getPortfolioById.php',
   getUserInfo: prefix + '/apis/getUserInfo.php',
-  getStockInfo: prefix + '/apis/getStockInfo.php'
+  getStockInfo: prefix + 'https://web.njit.edu/~mc332/webapps8/hello2'
 }
 
 //All Pages in out app

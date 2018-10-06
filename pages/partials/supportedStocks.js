@@ -37,8 +37,8 @@ for (var index = 0; index < dow30.length; index++) {
 }
 
 var indiaStocks = [
-  'Axis Bank',
-  'Wipro', 
+  'AXISBANK.NS',
+  'WIPRO.NS', 
   'ITC',
   'HDFC Bank',
   'HDFC',

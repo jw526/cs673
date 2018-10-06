@@ -6,6 +6,12 @@ window.App = window.App || {};
 
 // This will init all user controllers
 (function (App) {
+  var minStocks = 7;
+  var macStocks = 10;
+  var dowThreshold = 0.70;
+  var indiaThreshold = 0.30;
+  var cashThreshold = 0.10
+
 
   // This will expose the user controller
   App.Stocks = {
@@ -55,7 +61,7 @@ window.App = window.App || {};
 
     var myStock = {};
     console.log('NOTE WE NEED REAL WORLD VALUE');
-    var currentPrice = 22;
+    var currentPrice = window.App.datalayer.currentStockPrices[selectedStockId];
 
     for (var index = 0; index < stocksInPortfolio.length; index++) {
       var stock = stocksInPortfolio[index];
@@ -120,22 +126,16 @@ window.App = window.App || {};
       company_name: !isDow30 ? stock : stock.split(":")[1]
     }
 
-    // request stock info
-    $.ajax(window.App.endpoints.getStockInfo, {
-      method: 'post',
-      success: function (data) {
+    _getStockPrice(window.App.datalayer.searchStockData.ticker, function (price) {
+      // Display Info
+      $("#stock-modal-title").html(stock);
+      $('#view-stock-modal').modal();
+      $("#search-stock-price").html(parseFloat(price));
 
-        // Display Info
-        $("#stock-modal-title").html(stock);
-        $('#view-stock-modal').modal();
-        $("#search-stock-price").html(data.price);
-
-        window.App.datalayer.searchStockData.price = data.price;
-      },
-      data: {
-        ticker: window.App.datalayer.searchStockData.ticker,
-      }
+      window.App.datalayer.searchStockData.price = parseFloat(price);
     });
+
+
   }
 
 
@@ -194,6 +194,9 @@ window.App = window.App || {};
 
     }
 
+    // Fetch and Render Current Prices
+    renderStockCurrentPrices(keys);
+
     return aggregatedStocks;
   }
 })(window.App)
@@ -228,5 +231,29 @@ function getTotalStockQtyGivenTransactions(type, stocksMap, stockId) {
   }
 
   return qty;
+}
+
+// Only for portfolio view
+function renderStockCurrentPrices (arrayOfTickers) {
+  for (var index = 0; index < arrayOfTickers.length; index++) {
+    var ticker = arrayOfTickers[index];
+
+    render(ticker)
+
+  }
+
+  function render(ticker) {
+    _getStockPrice(ticker, function (price) {
+      $("#stock-ticker-" + ticker).html(parseFloat(price));
+      window.App.datalayer.currentStockPrices[ticker] = parseFloat(price);
+    });
+  }
+}
+
+
+function _getStockPrice(ticker, callback) {
+  $.get(window.App.endpoints.getStockInfo + "?ticket=" + ticker, function (price) {
+    callback(price);
+  });
 }
 

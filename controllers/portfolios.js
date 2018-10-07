@@ -15,39 +15,48 @@ window.App = window.App || {};
     addNewPortfolio: _addNewPortfolio,
     deletePortfolio: _deletePortfolio,
     toggleDeleteModal: _toggleDeleteModal,
+    removeCashPortfolio: _removeCashPortfolio,
+    toggleRemoveCashModal: _toggleRemoveCashModal,
     addCashPortfolio: _addCashPortfolio,
     getCashPortfolio: _getCashPortfolio,
-    investCashPortfolio: _investCashPortfolio
+    investCashPortfolio: _investCashPortfolio,
+    loadCashAccount: _loadCashAccount
     //getPortfoliosForBuyModal: _getPortfoliosForBuyModal
   }
 
 
+  function _loadCashAccount() {
+    $.ajax(window.App.endpoints.getCashPortfolio, {
+      method: 'post',
+      success: function (data) {
+        var transactions = data.cashTransactions;
+        var totalCashLeft = getTotalCashByTransaction(transactions);
+        window.App.datalayer.currentPortfolioCash = totalCashLeft || 0;
+        $("#cash-account-balance").html(totalCashLeft || 0);
+      },
+      data: {
+        portfolioId: 0
+      }
+    }); 
+  }
 
-  function _getCashPortfolio() {
-    var portfolioId = window.getCurrentPortfolioId();
+  function _getCashPortfolio(pid, callback) {
+    var portfolioId = pid || window.getCurrentPortfolioId();
 
     $.ajax(window.App.endpoints.getCashPortfolio, {
       method: 'post',
       success: function (data) {
         var transactions = data.cashTransactions;
-        var totalCashLeft = 0;
+        var totalCashLeft = getTotalCashByTransaction(transactions);
 
-        for (var index = 0; index < transactions.length; index++) {
-          var transaction = transactions[index];
-          if (transaction.cash_action == "add") {
-            totalCashLeft += parseFloat(transaction.cash_amount);
-          } else {
-            totalCashLeft -= parseFloat(transaction.cash_amount);
-          }
+        if (typeof callback == 'function') {
+          return callback(totalCashLeft);
         }
-
-
-
-        window.App.datalayer.currentPortfolioCash = totalCashLeft || 0;
-        $("#cash-account-balance").html(totalCashLeft || 0);
+        window.App.datalayer.currentPortfolioCash = formatPrice(totalCashLeft) || 0;
+        $("#cash-account-balance").html(formatPrice(totalCashLeft) || 0);
       },
       data: {
-        portfolioId: portfolioId
+        portfolioId: portfolioId || 0
       }
     });
   }
@@ -57,7 +66,9 @@ window.App = window.App || {};
 
     $.ajax(window.App.endpoints.investeCashPortfolio, {
       method: 'post',
-      success: _getCashPortfolio,
+      success: function (params) {
+        _getCashPortfolio();
+      },
       data: {
         portfolioId: portfolioId,
         cashAmount: amount
@@ -66,7 +77,15 @@ window.App = window.App || {};
   }
 
 
-  function _addCashPortfolio(totalValue, backgroundJob) {
+  function _removeCashPortfolio () {
+    var amount = $("#remove-cash-amount").val();
+
+    _investCashPortfolio(amount);
+    _addCashPortfolio(amount, true, false, true);    
+    _toggleRemoveCashModal();
+  }
+
+  function _addCashPortfolio(totalValue, backgroundJob, shouldRemoveFromCashAccount, isCashAccount) {
     var amount
 
     if (totalValue) {
@@ -84,6 +103,10 @@ window.App = window.App || {};
       portfolioId = window.location.search.split('id')[1].split('&')[0].replace('=', '');
     }
 
+    if (isCashAccount) {
+      portfolioId = 0;
+    }
+
     if (!amount) {
       return;
     } else {
@@ -92,6 +115,11 @@ window.App = window.App || {};
         success: function () {
           _loadPortfolioById();
           
+
+          if (shouldRemoveFromCashAccount) {
+            removeCashAccount(amount);
+          }
+
           if (!backgroundJob) {
             $('#add-cash-modal').modal('toggle');
           }
@@ -120,6 +148,10 @@ window.App = window.App || {};
     $('#delete-port-modal').modal('toggle');
   }
 
+  function _toggleRemoveCashModal() {
+    $('#remove-cash-modal').modal('toggle');
+  }
+
   function _addNewPortfolio(event) {
     var name = $("#new-portfolio-name").val();
 
@@ -144,8 +176,37 @@ window.App = window.App || {};
     $.ajax(window.App.endpoints.deletePortfolio, {
       method: 'post',
       success: function() {
-          _loadUserPortfolios();
-          $('#delete-port-modal').modal('toggle');
+
+        _loadUserPortfolios();
+
+        _getCashPortfolio(window.App.datalayer.selectedPortfolioId, function (cashInPortfolio) {
+          addToCashAccount(cashInPortfolio, _loadCashAccount);
+        });
+
+        _getStocksByPortfolioId(window.App.datalayer.selectedPortfolioId, function(stocks) {
+          for (let index = 0; index < stocks.length; index++) {
+            const stock = stocks[index];
+            addStockValueToCashAccunt(stock);
+          }
+        });
+
+
+        function addStockValueToCashAccunt(stock) {
+          _getStockPrice(stock.id, function (price) {
+            var isIndia = isIndianStock(stock.id);
+            var usds = price;
+
+            if (isIndia) {
+              usds = price * window.indiaConverionRate;
+            }
+
+            addToCashAccount(stock.qty * usds, _loadCashAccount);
+          });
+        }
+
+
+
+        $('#delete-port-modal').modal('toggle');
       },
       data: {
         portfolioId: window.App.datalayer.selectedPortfolioId
@@ -214,6 +275,8 @@ window.App = window.App || {};
       template.children('.action').html(portfolio.action);
       template.children('.date').html(portfolio.transaction_date);
       template.children('.total-spent').html('$' + portfolio.totalSpent);
+
+      template.children('.current-value').attr('id', 'stock-ticker-' + portfolio.id.replace(/\.|&/, "_"))
 
       // Remove not needed attributes
       template.removeClass('template');
@@ -295,4 +358,51 @@ function getCurrentPortfolioId () {
     console.error('Most Likly IE browser');
     return window.location.search.split('id')[1].split('&')[0].replace('=', '');
   }
+}
+
+function addToCashAccount(amount, callback) {
+  $.ajax(window.App.endpoints.addCashPortfolio, {
+    method: 'post',
+    success: callback || function() {},
+    data: {
+      cashAmount: amount,
+      portfolioId: 0
+    }
+  });
+}
+
+function removeCashAccount(amount) {
+  $.ajax(window.App.endpoints.investeCashPortfolio, {
+    method: 'post',
+    data: {
+      cashAmount: amount,
+      portfolioId: 0
+    }
+  });
+}
+
+
+function getTotalCashByTransaction(transactions) {
+  var totalCashLeft = 0;
+
+  for (var index = 0; index < transactions.length; index++) {
+    var transaction = transactions[index];
+    if (transaction.cash_action == "add") {
+      totalCashLeft += parseFloat(transaction.cash_amount);
+    } else {
+      totalCashLeft -= parseFloat(transaction.cash_amount);
+    }
+  }
+
+  return formatPrice(totalCashLeft);
+}
+
+function _getStocksByPortfolioId(portfolioId, callback) {
+  $.ajax(window.App.endpoints.getPortfolioById, {
+    method: 'post',
+    success: function (res) {
+      callback(window.App.Stocks.aggregate(res.stocks));
+    },
+    data: { id: portfolioId }
+  });
 }

@@ -6,6 +6,12 @@ window.App = window.App || {};
 
 // This will init all user controllers
 (function (App) {
+  var minStocks = 7;
+  var macStocks = 10;
+  var dowThreshold = 0.70;
+  var indiaThreshold = 0.30;
+  var cashThreshold = 0.10
+
 
   // This will expose the user controller
   App.Stocks = {
@@ -54,8 +60,7 @@ window.App = window.App || {};
     var amountToSell = $('#amount-of-stock-to-sell').val();
 
     var myStock = {};
-    console.log('NOTE WE NEED REAL WORLD VALUE');
-    var currentPrice = 22;
+    var currentPrice = window.App.datalayer.currentStockPrices[selectedStockId];
 
     for (var index = 0; index < stocksInPortfolio.length; index++) {
       var stock = stocksInPortfolio[index];
@@ -112,6 +117,8 @@ window.App = window.App || {};
       return;
     }
 
+  
+
     // Store selected data for latter use
     var isDow30 = dow30.indexOf(stock) > -1;
     window.App.datalayer.searchStockData = {
@@ -120,22 +127,23 @@ window.App = window.App || {};
       company_name: !isDow30 ? stock : stock.split(":")[1]
     }
 
-    // request stock info
-    $.ajax(window.App.endpoints.getStockInfo, {
-      method: 'post',
-      success: function (data) {
+    _getStockPrice(window.App.datalayer.searchStockData.ticker, function (price) {
+      // Display Info
+      $("#stock-modal-title").html(stock);
+      $('#view-stock-modal').modal();
+      $("#search-stock-price").html(price);
 
-        // Display Info
-        $("#stock-modal-title").html(stock);
-        $('#view-stock-modal').modal();
-        $("#search-stock-price").html(data.price);
-
-        window.App.datalayer.searchStockData.price = data.price;
-      },
-      data: {
-        ticker: window.App.datalayer.searchStockData.ticker,
+      if (!isDow30) {
+        $("#search-stock-price").html(
+          formatPrice(price * window.indiaConverionRate) + " (" + price + "INR)"
+          );
+        price = price * window.indiaConverionRate;
       }
+
+      window.App.datalayer.searchStockData.price = price;
     });
+
+
   }
 
 
@@ -194,6 +202,9 @@ window.App = window.App || {};
 
     }
 
+    // Fetch and Render Current Prices
+    renderStockCurrentPrices(keys);
+
     return aggregatedStocks;
   }
 })(window.App)
@@ -228,5 +239,68 @@ function getTotalStockQtyGivenTransactions(type, stocksMap, stockId) {
   }
 
   return qty;
+}
+
+// Only for portfolio view
+function renderStockCurrentPrices (arrayOfTickers) {
+  for (var index = 0; index < arrayOfTickers.length; index++) {
+    var ticker = arrayOfTickers[index];
+
+    render(ticker)
+
+  }
+
+  function render(ticker) {
+    console.log('')
+    _getStockPrice(ticker, function (price) {
+      var isIndia = isIndianStock(ticker);
+      var truePrice = price;
+
+      if (isIndia) {
+        truePrice = formatPrice(price * window.indiaConverionRate);
+      }
+      
+      $("#stock-ticker-" + ticker.replace(/\.|&/, "_")).html(truePrice);
+      window.App.datalayer.currentStockPrices[ticker] = truePrice;
+    });
+  }
+}
+
+
+function _getStockPrice(ticker, callback) {
+  var patchTicker;
+
+  if (!ticker) {
+    return;
+  }
+
+  for (var index = 0; index < indiaStocks.length; index++) {
+    var stock = indiaStocks[index];
+    if (ticker.split('.')[0] == stock.split('.')[0].split('-')[0]) {
+      patchTicker = stock
+    }
+  }
+
+  console.log('getting price for ', patchTicker || ticker);
+  
+  $.get(window.App.endpoints.getStockInfo + "?ticket=" + (patchTicker || ticker), function (price) {
+    var clean = price.replace(/,|</g, "");
+    var float = parseFloat(clean).toFixed(2);
+    callback(float);
+  });
+}
+
+
+function isIndianStock(ticker) {
+  var isIndian = false;
+
+  for (var index = 0; index < indiaStocks.length; index++) {
+    var stock = indiaStocks[index];
+    if (ticker.split('.')[0] == stock.split('.')[0].split('-')[0]) {
+      isIndian = true
+    }
+  }
+
+  return isIndian;
 }
 

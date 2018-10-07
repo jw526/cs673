@@ -25,7 +25,7 @@
         </li>
       </ul>
       <form class="form-inline my-2 my-lg-0" id="search-stock-form">
-        <input id="search-input-feild" name="search-input-feild" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <input id="search-input-feild" name="search-input-feild" class="form-control mr-sm-2" type="search" placeholder="Enter Ticker" aria-label="Search">
         <button class="btn btn-outlined my-2 my-sm-0" type="submit">Search</button>
       </form>
     </div>

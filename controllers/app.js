@@ -20,7 +20,10 @@ window.App.datalayer = {
     price: null
   },
   currentStocksForCurrentView: [], // on portfolio view page these are all the stocks we are seeing
-  currentPortfolioCash: 0
+  currentPortfolioCash: 0,
+  currentStockPrices: {
+    
+  }
 };
 
 window.App.isLocalHost = window.location.href.indexOf('~mc332') === -1;
@@ -41,7 +44,7 @@ window.App.endpoints = {
   getUserPortfolio: prefix + '/apis/getUserPortfolios.php',
   getPortfolioById: prefix + '/apis/getPortfolioById.php',
   getUserInfo: prefix + '/apis/getUserInfo.php',
-  getStockInfo: prefix + '/apis/getStockInfo.php'
+  getStockInfo: 'https://web.njit.edu/~mc332/webapps8/hello2'
 }
 
 //All Pages in out app
@@ -74,7 +77,8 @@ function allPagesInit (params) {
 
 function initMyAccount() {
   window.App.User.getUserBasicInfo([
-    window.App.Portfolio.loadUserPortfolios
+    window.App.Portfolio.loadUserPortfolios,
+    (function () { window.App.Portfolio.loadCashAccount() })
   ]);
 
   $("#logout-button").on('click', window.App.User.logout);
@@ -103,3 +107,29 @@ function initLoginScreen() {
     })
   })
 }
+
+function formatPrice(price) {
+  try {
+    return parseFloat(price).toFixed(2);
+  } catch (error) {
+    return price;
+  }
+}
+
+$.get('https://www.google.com/search?q=INR+conversoin+rate', function (data) {
+
+  try {
+    var conversionRate = (parseFloat(data.split('\"knowledge-currency__tgt-amount\"')[1].split(">")[1]));
+    window.indiaConverionRate = conversionRate;
+    console.log(window.indiaConverionRate + " is the convversion rate");
+    
+  } catch (error) {
+    console.log('Failed to get conversion rate');
+    window.indiaConverionRate = 0.014;
+  }
+
+})
+
+setTimeout(function () {
+  window.indiaConverionRate = window.indiaConverionRate || 0.014;
+}, 1000);

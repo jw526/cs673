@@ -40,14 +40,18 @@ window.App = window.App || {};
     }); 
   }
 
-  function _getCashPortfolio() {
-    var portfolioId = window.getCurrentPortfolioId();
+  function _getCashPortfolio(pid, callback) {
+    var portfolioId = pid || window.getCurrentPortfolioId();
 
     $.ajax(window.App.endpoints.getCashPortfolio, {
       method: 'post',
       success: function (data) {
         var transactions = data.cashTransactions;
         var totalCashLeft = getTotalCashByTransaction(transactions);
+
+        if (callback) {
+          return callback(totalCashLeft);
+        }
         window.App.datalayer.currentPortfolioCash = formatPrice(totalCashLeft) || 0;
         $("#cash-account-balance").html(formatPrice(totalCashLeft) || 0);
       },
@@ -172,8 +176,15 @@ window.App = window.App || {};
     $.ajax(window.App.endpoints.deletePortfolio, {
       method: 'post',
       success: function() {
-          _loadUserPortfolios();
-          $('#delete-port-modal').modal('toggle');
+
+        _loadUserPortfolios();
+
+        _getCashPortfolio(window.App.datalayer.selectedPortfolioId, function (cashInPortfolio) {
+          addToCashAccount(cashInPortfolio, _loadCashAccount);
+        });
+
+
+        $('#delete-port-modal').modal('toggle');
       },
       data: {
         portfolioId: window.App.datalayer.selectedPortfolioId
@@ -327,9 +338,10 @@ function getCurrentPortfolioId () {
   }
 }
 
-function addToCashAccount(amount) {
+function addToCashAccount(amount, callback) {
   $.ajax(window.App.endpoints.addCashPortfolio, {
     method: 'post',
+    success: callback || function() {},
     data: {
       cashAmount: amount,
       portfolioId: 0
@@ -346,6 +358,7 @@ function removeCashAccount(amount) {
     }
   });
 }
+
 
 function getTotalCashByTransaction(transactions) {
   var totalCashLeft = 0;

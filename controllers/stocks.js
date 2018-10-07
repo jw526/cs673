@@ -40,6 +40,8 @@ window.App = window.App || {};
         $('#view-stock-modal').modal('toggle');
         $("#stock-modal-title").html('');
         $("#search-stock-price").html('');
+        
+        
         window.App.Portfolio.loadPortfolioById();
         window.App.Portfolio.investCashPortfolio(totalCost);
       },
@@ -251,7 +253,6 @@ function renderStockCurrentPrices (arrayOfTickers) {
   }
 
   function render(ticker) {
-    console.log('')
     _getStockPrice(ticker, function (price) {
       var isIndia = isIndianStock(ticker);
       var truePrice = price;
@@ -281,7 +282,7 @@ function _getStockPrice(ticker, callback) {
     }
   }
 
-  console.log('getting price for ', patchTicker || ticker);
+  //console.log('getting price for ', patchTicker || ticker);
   
   $.get(window.App.endpoints.getStockInfo + "?ticket=" + (patchTicker || ticker), function (price) {
     var clean = price.replace(/,|</g, "");

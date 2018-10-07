@@ -260,6 +260,11 @@ window.App = window.App || {};
       ? res.stocks
       : window.App.Stocks.aggregate(res.stocks)
 
+
+    if (!isTransactionsView) {
+      triggerPossibleAlert(stocks);
+    }
+
     // store stocks for latter use
     window.App.datalayer.currentStocksForCurrentView = stocks;
     
@@ -405,4 +410,17 @@ function _getStocksByPortfolioId(portfolioId, callback) {
     },
     data: { id: portfolioId }
   });
+}
+
+function triggerPossibleAlert(stocks) {  
+  if (stocks.length >= 1 && stocks.length < 7) {
+    $("#stock-amount-owned-error").html('number of stocks must be minimum 7');
+    $("#search-input-feild").attr('disabled', false);
+  } else if (stocks.length >= 10) {
+    $("#stock-amount-owned-error").html('number of stocks must be at most 10. Search Disabled!');
+    $("#search-input-feild").attr('disabled', true)
+  } else {
+    $("#stock-amount-owned-error").html('');
+    $("#search-input-feild").attr('disabled', false);
+  }
 }

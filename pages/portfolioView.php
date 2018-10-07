@@ -20,7 +20,6 @@
         <th scope="col">Ticker</th>
         <th scope="col">Quantity</th>
         <th scope="col">Current Value</th>
-        <th scope="col">Gain/Lost</th>
         <th scope="col">Actions</th>
       </tr>
     </thead>
@@ -28,8 +27,7 @@
       <tr id="portfolio-row-template" class="template portfolio-row">
         <th class="id"></th>
         <td class="qty"></td>
-        <td class="current-value">?</td>
-        <td class="gain-lost">?</td>
+        <td class="current-value">N/A</td>
         <td class="actions">
           <!-- <button class="btn btn-success">Buy</button> -->
           <button class="btn btn-danger" onclick="window.App.Stocks.toggleSellStockModal(this)">Sell</button>

@@ -115,3 +115,17 @@ function formatPrice(price) {
     return price;
   }
 }
+
+$.get('https://www.google.com/search?q=INR+conversoin+rate', function (data) {
+
+  try {
+    var conversionRate = (parseFloat(data.split('\"knowledge-currency__tgt-amount\"')[1].split(">")[1]));
+    window.indiaConverionRate = conversionRate;
+    console.log(window.indiaConverionRate + " is the convversion rate");
+    
+  } catch (error) {
+    console.log('Failed to get conversion rate');
+    window.indiaConverionRate = 0.014;
+  }
+
+})

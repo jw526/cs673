@@ -117,6 +117,8 @@ window.App = window.App || {};
       return;
     }
 
+  
+
     // Store selected data for latter use
     var isDow30 = dow30.indexOf(stock) > -1;
     window.App.datalayer.searchStockData = {
@@ -130,6 +132,13 @@ window.App = window.App || {};
       $("#stock-modal-title").html(stock);
       $('#view-stock-modal').modal();
       $("#search-stock-price").html(price);
+
+      if (!isDow30) {
+        $("#search-stock-price").html(
+          formatPrice(price * window.indiaConverionRate) + " (" + price + "INR)"
+          );
+        price = price * window.indiaConverionRate;
+      }
 
       window.App.datalayer.searchStockData.price = price;
     });
@@ -242,19 +251,56 @@ function renderStockCurrentPrices (arrayOfTickers) {
   }
 
   function render(ticker) {
+    console.log('')
     _getStockPrice(ticker, function (price) {
-      $("#stock-ticker-" + ticker).html(price);
-      window.App.datalayer.currentStockPrices[ticker] = price;
+      var isIndia = isIndianStock(ticker);
+      var truePrice = price;
+
+      if (isIndia) {
+        truePrice = formatPrice(price * window.indiaConverionRate);
+      }
+      
+      $("#stock-ticker-" + ticker.replace(/\.|&/, "_")).html(truePrice);
+      window.App.datalayer.currentStockPrices[ticker] = truePrice;
     });
   }
 }
 
 
 function _getStockPrice(ticker, callback) {
-  $.get(window.App.endpoints.getStockInfo + "?ticket=" + ticker, function (price) {
-    var clean = price.replace(/,/g, "");
+  var patchTicker;
+
+  if (!ticker) {
+    return;
+  }
+
+  for (var index = 0; index < indiaStocks.length; index++) {
+    var stock = indiaStocks[index];
+    if (ticker.split('.')[0] == stock.split('.')[0].split('-')[0]) {
+      patchTicker = stock
+    }
+  }
+
+  console.log('getting price for ', patchTicker || ticker);
+  
+  $.get(window.App.endpoints.getStockInfo + "?ticket=" + (patchTicker || ticker), function (price) {
+    var clean = price.replace(/,|</g, "");
     var float = parseFloat(clean).toFixed(2);
     callback(float);
   });
+}
+
+
+function isIndianStock(ticker) {
+  var isIndian = false;
+
+  for (var index = 0; index < indiaStocks.length; index++) {
+    var stock = indiaStocks[index];
+    if (ticker.split('.')[0] == stock.split('.')[0].split('-')[0]) {
+      isIndian = true
+    }
+  }
+
+  return isIndian;
 }
 

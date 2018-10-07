@@ -269,7 +269,7 @@ window.App = window.App || {};
       template.children('.date').html(portfolio.transaction_date);
       template.children('.total-spent').html('$' + portfolio.totalSpent);
 
-      template.children('.current-value').attr('id', 'stock-ticker-' + portfolio.id)
+      template.children('.current-value').attr('id', 'stock-ticker-' + portfolio.id.replace(/\.|&/, "_"))
 
       // Remove not needed attributes
       template.removeClass('template');

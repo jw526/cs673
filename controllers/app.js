@@ -129,3 +129,7 @@ $.get('https://www.google.com/search?q=INR+conversoin+rate', function (data) {
   }
 
 })
+
+setTimeout(function () {
+  window.indiaConverionRate = window.indiaConverionRate || 0.014;
+}, 1000);

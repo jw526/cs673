@@ -93,7 +93,10 @@
   
     
     if ($function == 'needRebalance') {
-        echo needRebalance($cash, $domesticStockValue, $foreignStockValue);
+        $obj = (object) [
+            'needRebalance' => needRebalance($cash, $domesticStockValue, $foreignStockValue)
+        ];
+        echo json_encode($obj);
     }
 
     if ($function == 'rebalance') {

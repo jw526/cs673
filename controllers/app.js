@@ -3,10 +3,10 @@
  * @summary This is the main js will that will initalize the App name space
  */
 
-window.onerror = function (a, b , c ,d) {
-  alert("ERROR!", a, b, c, d);
-  console.log(a, b, c, d);
-}
+// window.onerror = function (a, b , c ,d) {
+//   alert("ERROR!", a, b, c, d);
+//   console.log(a, b, c, d);
+// }
 
 // Init App..
 window.App = window.App || {};
@@ -33,6 +33,7 @@ var prefix = window.App.isLocalHost ? '' : '/~mc332/cs673';
 // Endpoints will go here
 window.App.endpoints = {
   login: prefix + '/apis/login.php',
+  rebalance: prefix + '/apis/rebalance.php',
   addCashPortfolio: prefix + '/apis/addCashPortfolio.php',
   buyStock: prefix + '/apis/buyStock.php',
   sellStock: prefix + '/apis/sellStock.php',

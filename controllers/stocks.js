@@ -351,17 +351,28 @@ function triggerPossibleAutoMergeMessage (args) {
   var indiaPercent = args.indiaPercent;
 
   var message = '(WARNING: Your portfolio needs to be re-balance to follow the 70/30 rule)';
-  var button = "<button style='font-size: 10px'> Auto Balance</button>";
+  var button = "<button style='font-size: 10px' onclick='window.rebalance()'> Auto Balance</button>";
 
-  if (cashPercent > 10 && (usPercent > 0 || indiaPercent > 0)) {
-    $("#auto-balance-error").html(message);
-    $("#auto-balance-error").append(button);
-  } else if (usPercent > 70 || indiaPercent > 30) {
-    $("#auto-balance-error").html(message);
-    $("#auto-balance-error").append(button);
-  } else {
-    $("#auto-balance-error").html('');
-  }
+  $.ajax(window.App.endpoints.rebalance, {
+    method: 'post',
+    success: function (data) {
+      if (data.needRebalance == 'TRUE') {
+        $("#auto-balance-error").html(message);
+        $("#auto-balance-error").append(button);
+      } else {
+        $("#auto-balance-error").html('');
+      }
+    },
+    data: {
+      portfolio_id: window.getCurrentPortfolioId(),
+      cash: getCashValue(),
+      domesticStockValue: getToalUsStocksValue(),
+      foreignStockValue: getToalIndiaStocksValue(),
+      function: 'needRebalance'
+    }
+  });
+
+
 
 }
 
@@ -373,8 +384,8 @@ function renderPercentageAllocation () {
   var total = cash + usStocks + indiaStocks;
 
   var cashPercent = formatPrice((cash / total) * 100);
-  var usPercent = formatPrice((usStocks / total) * 100);
-  var indiaPercent = formatPrice((indiaStocks / total) * 100);
+  var usPercent = formatPrice((usStocks / (usStocks + indiaStocks)) * 100);
+  var indiaPercent = formatPrice((indiaStocks / (usStocks + indiaStocks)) * 100);
   
   triggerPossibleAutoMergeMessage({
     cashPercent: cashPercent,
@@ -387,4 +398,43 @@ function renderPercentageAllocation () {
   $("#india-percent").html(indiaPercent || 0);
 }
 
+
+
+function rebalance() {
+  $.ajax(window.App.endpoints.rebalance, {
+    method: 'post',
+    success: function (data) {
+      console.log(data);
+      window.App.Portfolio.loadPortfolioById();
+    },
+    data: {
+      portfolio_id: window.getCurrentPortfolioId(),
+      cash: getCashValue(),
+      domesticStockValue: getToalUsStocksValue(),
+      foreignStockValue: getToalIndiaStocksValue(),
+      function: 'rebalance',
+      usStockLeastReturnTicker: getUsLRS(),
+      usStockMostReturnTicker: getUsMRS(),
+      indiaStockLeastReturnTicker: getInLRS(),
+      indiaStockMostReturnTicker: getInMRS()
+    }
+  });
+}
+
 setInterval(renderPercentageAllocation, 1000);
+
+function getUsLRS() {
+  return null;
+}
+
+function getUsMRS() {
+  return null;
+}
+
+function getInLRS() {
+  return null;
+}
+
+function getInMRS() {
+  return null;
+}

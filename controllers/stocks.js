@@ -191,11 +191,15 @@ window.App = window.App || {};
       var totalQtyBought = getTotalStockBoughtGivenTransactions(stocksMap, stockId);
       var totalQtySold = getTotalStockSoldGivenTransactions(stocksMap, stockId);
 
+      var totalValueBought = getTotalStockBoughtValueGivenTransactions(stocksMap, stockId);
+      var totalValueSold = getTotalStockSoldValueGivenTransactions(stocksMap, stockId);
+
       // only show stocks we own
       if (totalQtyBought - totalQtySold > 0) {
         aggregatedStocks.push({
           id: stockId,
           qty: totalQtyBought - totalQtySold,
+          totalValue: totalValueBought - totalValueSold,
           company_name: stocksMap[stockId].company_name,
           stock_market: stocksMap[stockId].stock_market
         });
@@ -212,12 +216,43 @@ window.App = window.App || {};
 })(window.App)
 
 
+function getTotalStockBoughtValueGivenTransactions(stocksMap, stockId) {
+  return getTotalStockValueGivenTransactions('buy', stocksMap, stockId);
+}
+
+function getTotalStockSoldValueGivenTransactions(stocksMap, stockId) {
+  return getTotalStockValueGivenTransactions('sell', stocksMap, stockId);
+}
+
 function getTotalStockBoughtGivenTransactions(stocksMap, stockId) {
   return getTotalStockQtyGivenTransactions('buy', stocksMap, stockId);
 }
 
 function getTotalStockSoldGivenTransactions(stocksMap, stockId) {
   return getTotalStockQtyGivenTransactions('sell', stocksMap, stockId);
+}
+
+function getTotalStockValueGivenTransactions(type, stocksMap, stockId) {
+  var value = 0;
+
+  try {
+    var stocksBought = stocksMap[stockId][type];
+
+    if (!stocksBought) {
+      return value;
+    }
+
+    for (var index = 0; index < stocksBought.length; index++) {
+      var stock = stocksBought[index];
+      value += parseFloat(stock.price * stock.qty);
+    }
+
+  } catch (error) {
+    alert(error);
+    console.log(error);
+  }
+
+  return value;
 }
 
 function getTotalStockQtyGivenTransactions(type, stocksMap, stockId) {
@@ -263,6 +298,7 @@ function renderStockCurrentPrices (arrayOfTickers) {
       
       $("#stock-ticker-" + ticker.replace(/\.|&/, "_")).html(truePrice);
       window.App.datalayer.currentStockPrices[ticker] = truePrice;
+      window.App.datalayer.currentStockReturnValue[ticker] = calculateReturnValue(ticker, truePrice);
     });
   }
 }
@@ -423,18 +459,126 @@ function rebalance() {
 
 setInterval(renderPercentageAllocation, 1000);
 
+
+function calculateReturnValue (ticker, livePrice) {
+  try {
+    var userStocks = window.App.datalayer.currentStocksForCurrentView;
+    var stock = null;
+
+    for (let index = 0; index < userStocks.length; index++) {
+      var _stock = userStocks[index];
+      if (_stock.id == ticker) {
+        stock = _stock;
+        break
+      }
+    }
+
+    if (!stock) {
+      return;
+    }
+
+
+    var avgCost = stock.totalValue / stock.qty;;
+
+    return livePrice - avgCost;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 function getUsLRS() {
-  return null;
+  try {
+    var least = 99999999;
+    var leastTicker = null;
+    var returnMap = window.App.datalayer.currentStockReturnValue;
+    var tickers = Object.keys(returnMap);
+
+    for (var index = 0; index < tickers.length; index++) {
+      var ticker = tickers[index];
+      if (!isIndianStock(ticker)) {
+        if (returnMap[ticker] < least) {
+          least = returnMap[ticker];
+          leastTicker = ticker;
+        }
+      }
+    }
+
+    return leastTicker;
+  } catch (error) {
+    console.error(error);
+    
+  }
 }
 
 function getUsMRS() {
-  return null;
+  try {
+    var least = -999999;
+    var leastTicker = null;
+    var returnMap = window.App.datalayer.currentStockReturnValue;
+    var tickers = Object.keys(returnMap);
+
+    for (var index = 0; index < tickers.length; index++) {
+      var ticker = tickers[index];
+      if (!isIndianStock(ticker)) {
+        if (returnMap[ticker] > least) {
+          least = returnMap[ticker];
+          leastTicker = ticker;
+        }
+      }
+    }
+
+    return leastTicker;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function getInLRS() {
-  return null;
+  try {
+    var least = 99999999;
+    var leastTicker = null;
+    var returnMap = window.App.datalayer.currentStockReturnValue;
+    var tickers = Object.keys(returnMap);
+
+    for (var index = 0; index < tickers.length; index++) {
+      var ticker = tickers[index];
+      if (isIndianStock(ticker)) {
+        if (returnMap[ticker] < least) {
+          least = returnMap[ticker];
+          leastTicker = ticker;
+        }
+      }
+    }
+
+    return leastTicker;
+  } catch (error) {
+    console.error(error);
+    
+  }
 }
 
 function getInMRS() {
-  return null;
+try {
+  var least = -99999;
+  var leastTicker = null;
+  var returnMap = window.App.datalayer.currentStockReturnValue;
+  var tickers = Object.keys(returnMap);
+
+  for (var index = 0; index < tickers.length; index++) {
+    var ticker = tickers[index];
+    if (isIndianStock(ticker)) {
+      if (returnMap[ticker] > least) {
+        least = returnMap[ticker];
+        leastTicker = ticker;
+      }
+    }
+  }
+
+  return leastTicker;
+} catch (error) {
+  console.error(error);
+  
 }
+}
+
+

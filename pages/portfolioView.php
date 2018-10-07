@@ -4,13 +4,20 @@
 <body>
 
   <h1 class="center">My Stocks</h1>
+    <div class="center">
+    Cash: <span id="cash-percent">...</span>% |
+    US Stock: <span id="us-percent">...</span>% |
+    India Stock: <span id="india-percent">...</span>%
+  </div>
+  <h5 id="stock-amount-owned-error" style="color:red" class="center"></h5>
+  <h5 id="auto-balance-error" style="color:red" class="center"></h5>
   <div class="center">Cash Balance: $<span id="cash-account-balance">0</span></div>
 
   <!-- Action Bar -->
   <div class="header-button-container">
     <button class="btn btn-primary" onclick="$('#add-cash-modal').modal('toggle')">Add Cash</button>
     <button class="btn btn-danger" onclick="window.App.Portfolio.toggleRemoveCashModal()">Remove Cash</button>
-    <button class="btn btn-success" type="button" onclick="window.App.pages.portfolioTransactionView()">View Transactions</button>
+    <button class="btn btn-success" type="button" onclick="window.App.pages.portfolioTransactionView()">View Stock Transactions</button>
   </div>
 
   <!-- Table View -->

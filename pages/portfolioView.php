@@ -18,6 +18,7 @@
     <button class="btn btn-primary" onclick="$('#add-cash-modal').modal('toggle')">Add Cash</button>
     <button class="btn btn-danger" onclick="window.App.Portfolio.toggleRemoveCashModal()">Remove Cash</button>
     <button class="btn btn-success" type="button" onclick="window.App.pages.portfolioTransactionView()">View Stock Transactions</button>
+    <button class="btn btn-success" type="button" onclick="window.downloadPortfolio()">Download</button>
   </div>
 
   <!-- Table View -->

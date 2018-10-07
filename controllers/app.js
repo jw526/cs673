@@ -44,6 +44,7 @@ window.App.endpoints = {
   getUserPortfolio: prefix + '/apis/getUserPortfolios.php',
   getPortfolioById: prefix + '/apis/getPortfolioById.php',
   getUserInfo: prefix + '/apis/getUserInfo.php',
+  downloadPortfolio: prefix + "/apis/report.php",
   getStockInfo: 'https://web.njit.edu/~mc332/webapps8/hello2'
 }
 
@@ -133,3 +134,8 @@ $.get('https://www.google.com/search?q=INR+conversoin+rate', function (data) {
 setTimeout(function () {
   window.indiaConverionRate = window.indiaConverionRate || 0.014;
 }, 1000);
+
+
+function downloadPortfolio () {
+  window.location.href = window.App.endpoints.downloadPortfolio;
+}

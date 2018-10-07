@@ -49,7 +49,7 @@ window.App = window.App || {};
         var transactions = data.cashTransactions;
         var totalCashLeft = getTotalCashByTransaction(transactions);
 
-        if (callback) {
+        if (typeof callback == 'function') {
           return callback(totalCashLeft);
         }
         window.App.datalayer.currentPortfolioCash = formatPrice(totalCashLeft) || 0;
@@ -61,14 +61,14 @@ window.App = window.App || {};
     });
   }
 
-  function _investCashPortfolio(amount, isCashAccount) {
-    var portfolioId = isCashAccount
-      ? 0
-      : window.getCurrentPortfolioId();
+  function _investCashPortfolio(amount) {
+    var portfolioId = window.getCurrentPortfolioId();
 
     $.ajax(window.App.endpoints.investeCashPortfolio, {
       method: 'post',
-      success: isCashAccount ? function() {} : _getCashPortfolio,
+      success: function (params) {
+        _getCashPortfolio();
+      },
       data: {
         portfolioId: portfolioId,
         cashAmount: amount
@@ -117,7 +117,7 @@ window.App = window.App || {};
           
 
           if (shouldRemoveFromCashAccount) {
-            _investCashPortfolio(amount, true);
+            removeCashAccount(amount);
           }
 
           if (!backgroundJob) {
@@ -182,6 +182,21 @@ window.App = window.App || {};
         _getCashPortfolio(window.App.datalayer.selectedPortfolioId, function (cashInPortfolio) {
           addToCashAccount(cashInPortfolio, _loadCashAccount);
         });
+
+        _getStocksByPortfolioId(window.App.datalayer.selectedPortfolioId, function(stocks) {
+          for (let index = 0; index < stocks.length; index++) {
+            const stock = stocks[index];
+            addStockValueToCashAccunt(stock);
+          }
+        });
+
+
+        function addStockValueToCashAccunt(stock) {
+          _getStockPrice(stock.id, function (price) {
+            addToCashAccount(stock.qty * price, _loadCashAccount);
+          });
+        }
+
 
 
         $('#delete-port-modal').modal('toggle');
@@ -373,4 +388,14 @@ function getTotalCashByTransaction(transactions) {
   }
 
   return formatPrice(totalCashLeft);
+}
+
+function _getStocksByPortfolioId(portfolioId, callback) {
+  $.ajax(window.App.endpoints.getPortfolioById, {
+    method: 'post',
+    success: function (res) {
+      callback(window.App.Stocks.aggregate(res.stocks));
+    },
+    data: { id: portfolioId }
+  });
 }

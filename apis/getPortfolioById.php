@@ -4,9 +4,11 @@
     
     global $dbc;
     $portfolioId = $_POST['id'];
+    
 
     $sql = "
         SELECT portfolio.portfolio_name AS portfolio_name,
+            portfolio.open_close AS open_close,
             DATE_FORMAT(portfolio.created_timestamp, '%c-%d-%Y %H:%i:%S') AS portfolio_created,
             transactions.quantity AS total_stock,
             transactions.stock_market AS stock_market,
@@ -21,7 +23,6 @@
             ON portfolio.portfolio_id = transactions.portfolio_id 
         AND portfolio.user_id = transactions.user_id
         WHERE portfolio.user_id = '$_SESSION[user_id]'
-            AND portfolio.open_close = 1
             AND portfolio.portfolio_id = $portfolioId
         ORDER BY transaction_date ASC;
     ";

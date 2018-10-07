@@ -2,7 +2,11 @@
 <html>
   <?php include('./partials/header.php'); ?>
 <body>
-
+  <style>
+    #search-stock-form {
+      display: none;
+    }
+  </style>
   <h1 class="center">Transactions</h1>
   <div class="center">Cash Balance: $<span id="cash-account-balance">0</span></div>
 

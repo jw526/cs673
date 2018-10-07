@@ -358,9 +358,9 @@ function renderPercentageAllocation () {
   
   console.log('');
   
-  $("#cash-percent").html(cashPercent);
-  $("#us-percent").html(usPercent);
-  $("#india-percent").html(indiaPercent);
+  $("#cash-percent").html(cashPercent || 0);
+  $("#us-percent").html(usPercent || 0);
+  $("#india-percent").html(indiaPercent || 0);
 }
 
 setInterval(renderPercentageAllocation, 1000);

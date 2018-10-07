@@ -9,8 +9,8 @@
     US Stock: <span id="us-percent">...</span>% |
     India Stock: <span id="india-percent">...</span>%
   </div>
-  <h5 id="stock-amount-owned-error" style="color:red" class="center"></h5>
-  <h5 id="auto-balance-error" style="color:red" class="center"></h5>
+  <div id="stock-amount-owned-error" style="color:red" class="center"></div>
+  <div id="auto-balance-error" style="color:red" class="center"></div>
   <div class="center">Cash Balance: $<span id="cash-account-balance">0</span></div>
 
   <!-- Action Bar -->
@@ -18,6 +18,7 @@
     <button class="btn btn-primary" onclick="$('#add-cash-modal').modal('toggle')">Add Cash</button>
     <button class="btn btn-danger" onclick="window.App.Portfolio.toggleRemoveCashModal()">Remove Cash</button>
     <button class="btn btn-success" type="button" onclick="window.App.pages.portfolioTransactionView()">View Stock Transactions</button>
+    <button class="btn btn-success" type="button" onclick="window.downloadPortfolio()">Download</button>
   </div>
 
   <!-- Table View -->
@@ -26,7 +27,7 @@
       <tr>
         <th scope="col">Ticker</th>
         <th scope="col">Quantity</th>
-        <th scope="col">Current Value</th>
+        <th scope="col">Live Value</th>
         <th scope="col">Actions</th>
       </tr>
     </thead>

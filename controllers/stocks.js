@@ -129,7 +129,13 @@ window.App = window.App || {};
       company_name: !isDow30 ? stock : stock.split(":")[1]
     }
 
-    _getStockPrice(window.App.datalayer.searchStockData.ticker, function (price) {
+    var ticker = patchTicker(window.App.datalayer.searchStockData.ticker);
+
+    _getStockPrice(ticker, function (price) {
+      if (isFirstTimeBuyer(ticker)) {
+        price = window.septemberPriceMap[ticker] || 0
+      }
+
       // Display Info
       $("#stock-modal-title").html(stock);
       $('#view-stock-modal').modal();
@@ -191,11 +197,15 @@ window.App = window.App || {};
       var totalQtyBought = getTotalStockBoughtGivenTransactions(stocksMap, stockId);
       var totalQtySold = getTotalStockSoldGivenTransactions(stocksMap, stockId);
 
+      var totalValueBought = getTotalStockBoughtValueGivenTransactions(stocksMap, stockId);
+      var totalValueSold = getTotalStockSoldValueGivenTransactions(stocksMap, stockId);
+
       // only show stocks we own
       if (totalQtyBought - totalQtySold > 0) {
         aggregatedStocks.push({
           id: stockId,
           qty: totalQtyBought - totalQtySold,
+          totalValue: totalValueBought - totalValueSold,
           company_name: stocksMap[stockId].company_name,
           stock_market: stocksMap[stockId].stock_market
         });
@@ -212,12 +222,43 @@ window.App = window.App || {};
 })(window.App)
 
 
+function getTotalStockBoughtValueGivenTransactions(stocksMap, stockId) {
+  return getTotalStockValueGivenTransactions('buy', stocksMap, stockId);
+}
+
+function getTotalStockSoldValueGivenTransactions(stocksMap, stockId) {
+  return getTotalStockValueGivenTransactions('sell', stocksMap, stockId);
+}
+
 function getTotalStockBoughtGivenTransactions(stocksMap, stockId) {
   return getTotalStockQtyGivenTransactions('buy', stocksMap, stockId);
 }
 
 function getTotalStockSoldGivenTransactions(stocksMap, stockId) {
   return getTotalStockQtyGivenTransactions('sell', stocksMap, stockId);
+}
+
+function getTotalStockValueGivenTransactions(type, stocksMap, stockId) {
+  var value = 0;
+
+  try {
+    var stocksBought = stocksMap[stockId][type];
+
+    if (!stocksBought) {
+      return value;
+    }
+
+    for (var index = 0; index < stocksBought.length; index++) {
+      var stock = stocksBought[index];
+      value += parseFloat(stock.price * stock.qty);
+    }
+
+  } catch (error) {
+    alert(error);
+    console.log(error);
+  }
+
+  return value;
 }
 
 function getTotalStockQtyGivenTransactions(type, stocksMap, stockId) {
@@ -253,6 +294,7 @@ function renderStockCurrentPrices (arrayOfTickers) {
   }
 
   function render(ticker) {
+    //console.log(ticker);
     _getStockPrice(ticker, function (price) {
       var isIndia = isIndianStock(ticker);
       var truePrice = price;
@@ -263,8 +305,23 @@ function renderStockCurrentPrices (arrayOfTickers) {
       
       $("#stock-ticker-" + ticker.replace(/\.|&/, "_")).html(truePrice);
       window.App.datalayer.currentStockPrices[ticker] = truePrice;
+      window.App.datalayer.currentStockReturnValue[ticker] = calculateReturnValue(ticker, truePrice);
     });
   }
+}
+
+function patchTicker (ticker) {
+  for (var index = 0; index < indiaStocks.length; index++) {
+    var stock = indiaStocks[index];
+    if (ticker.split('.')[0] == stock.split('.')[0].split('-')[0]) {
+      return stock
+    }
+    if (ticker.split('.')[0] == stock.split('.')[0]) {
+      return stock
+    }
+  }
+
+  return ticker;
 }
 
 
@@ -280,7 +337,13 @@ function _getStockPrice(ticker, callback) {
     if (ticker.split('.')[0] == stock.split('.')[0].split('-')[0]) {
       patchTicker = stock
     }
+    if (ticker.split('.')[0] == stock.split('.')[0]) {
+      patchTicker = stock
+    }
+
   }
+
+
 
   //console.log('getting price for ', patchTicker || ticker);
   
@@ -298,6 +361,9 @@ function isIndianStock(ticker) {
   for (var index = 0; index < indiaStocks.length; index++) {
     var stock = indiaStocks[index];
     if (ticker.split('.')[0] == stock.split('.')[0].split('-')[0]) {
+      isIndian = true
+    }
+    if (ticker.split('.')[0] == stock.split('.')[0]) {
       isIndian = true
     }
   }
@@ -351,17 +417,28 @@ function triggerPossibleAutoMergeMessage (args) {
   var indiaPercent = args.indiaPercent;
 
   var message = '(WARNING: Your portfolio needs to be re-balance to follow the 70/30 rule)';
-  var button = "<button style='font-size: 10px'> Auto Balance</button>";
+  var button = "<button style='font-size: 10px' onclick='window.rebalance()'> Auto Balance</button>";
 
-  if (cashPercent > 10 && (usPercent > 0 || indiaPercent > 0)) {
-    $("#auto-balance-error").html(message);
-    $("#auto-balance-error").append(button);
-  } else if (usPercent > 70 || indiaPercent > 30) {
-    $("#auto-balance-error").html(message);
-    $("#auto-balance-error").append(button);
-  } else {
-    $("#auto-balance-error").html('');
-  }
+  $.ajax(window.App.endpoints.rebalance, {
+    method: 'post',
+    success: function (data) {
+      if (data.needRebalance == 'TRUE') {
+        $("#auto-balance-error").html(message);
+        $("#auto-balance-error").append(button);
+      } else {
+        $("#auto-balance-error").html('');
+      }
+    },
+    data: {
+      portfolio_id: window.getCurrentPortfolioId(),
+      cash: getCashValue(),
+      domesticStockValue: getToalUsStocksValue(),
+      foreignStockValue: getToalIndiaStocksValue(),
+      function: 'needRebalance'
+    }
+  });
+
+
 
 }
 
@@ -373,8 +450,8 @@ function renderPercentageAllocation () {
   var total = cash + usStocks + indiaStocks;
 
   var cashPercent = formatPrice((cash / total) * 100);
-  var usPercent = formatPrice((usStocks / total) * 100);
-  var indiaPercent = formatPrice((indiaStocks / total) * 100);
+  var usPercent = formatPrice((usStocks / (usStocks + indiaStocks)) * 100);
+  var indiaPercent = formatPrice((indiaStocks / (usStocks + indiaStocks)) * 100);
   
   triggerPossibleAutoMergeMessage({
     cashPercent: cashPercent,
@@ -387,4 +464,165 @@ function renderPercentageAllocation () {
   $("#india-percent").html(indiaPercent || 0);
 }
 
+
+
+function rebalance() {
+  $.ajax(window.App.endpoints.rebalance, {
+    method: 'post',
+    success: function (data) {
+      console.log(data);
+      window.App.Portfolio.loadPortfolioById();
+    },
+    data: {
+      portfolio_id: window.getCurrentPortfolioId(),
+      cash: getCashValue(),
+      domesticStockValue: getToalUsStocksValue(),
+      foreignStockValue: getToalIndiaStocksValue(),
+      function: 'rebalance',
+      usStockLeastReturnTicker: getUsLRS(),
+      usStockMostReturnTicker: getUsMRS(),
+      indiaStockLeastReturnTicker: getInLRS(),
+      indiaStockMostReturnTicker: getInMRS()
+    }
+  });
+}
+
 setInterval(renderPercentageAllocation, 1000);
+
+
+function calculateReturnValue (ticker, livePrice) {
+  try {
+    var userStocks = window.App.datalayer.currentStocksForCurrentView;
+    var stock = null;
+
+    for (let index = 0; index < userStocks.length; index++) {
+      var _stock = userStocks[index];
+      if (_stock.id == ticker) {
+        stock = _stock;
+        break
+      }
+    }
+
+    if (!stock) {
+      return;
+    }
+
+
+    var avgCost = stock.totalValue / stock.qty;;
+
+    return livePrice - avgCost;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function getUsLRS() {
+  try {
+    var least = 99999999;
+    var leastTicker = null;
+    var returnMap = window.App.datalayer.currentStockReturnValue;
+    var tickers = Object.keys(returnMap);
+
+    for (var index = 0; index < tickers.length; index++) {
+      var ticker = tickers[index];
+      if (!isIndianStock(ticker)) {
+        if (returnMap[ticker] < least) {
+          least = returnMap[ticker];
+          leastTicker = ticker;
+        }
+      }
+    }
+
+    return leastTicker;
+  } catch (error) {
+    console.error(error);
+    
+  }
+}
+
+function getUsMRS() {
+  try {
+    var least = -999999;
+    var leastTicker = null;
+    var returnMap = window.App.datalayer.currentStockReturnValue;
+    var tickers = Object.keys(returnMap);
+
+    for (var index = 0; index < tickers.length; index++) {
+      var ticker = tickers[index];
+      if (!isIndianStock(ticker)) {
+        if (returnMap[ticker] > least) {
+          least = returnMap[ticker];
+          leastTicker = ticker;
+        }
+      }
+    }
+
+    return leastTicker;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function getInLRS() {
+  try {
+    var least = 99999999;
+    var leastTicker = null;
+    var returnMap = window.App.datalayer.currentStockReturnValue;
+    var tickers = Object.keys(returnMap);
+
+    for (var index = 0; index < tickers.length; index++) {
+      var ticker = tickers[index];
+      if (isIndianStock(ticker)) {
+        if (returnMap[ticker] < least) {
+          least = returnMap[ticker];
+          leastTicker = ticker;
+        }
+      }
+    }
+
+    return leastTicker;
+  } catch (error) {
+    console.error(error);
+    
+  }
+}
+
+function getInMRS() {
+try {
+  var least = -99999;
+  var leastTicker = null;
+  var returnMap = window.App.datalayer.currentStockReturnValue;
+  var tickers = Object.keys(returnMap);
+
+  for (var index = 0; index < tickers.length; index++) {
+    var ticker = tickers[index];
+    if (isIndianStock(ticker)) {
+      if (returnMap[ticker] > least) {
+        least = returnMap[ticker];
+        leastTicker = ticker;
+      }
+    }
+  }
+
+  return leastTicker;
+} catch (error) {
+  console.error(error);
+  
+}
+}
+
+
+function isFirstTimeBuyer (ticker) {
+  var firstTime = true;
+  var trans = window.App.datalayer.stockTransactions;
+
+  for (var index = 0; index < trans.length; index++) {
+    var tran = trans[index];
+    if (tran.id == ticker) {
+      firstTime = false;
+    }
+  }
+
+  return firstTime;
+}
+

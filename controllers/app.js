@@ -3,10 +3,10 @@
  * @summary This is the main js will that will initalize the App name space
  */
 
-window.onerror = function (a, b , c ,d) {
-  alert("ERROR!", a, b, c, d);
-  console.log(a, b, c, d);
-}
+// window.onerror = function (a, b , c ,d) {
+//   alert("ERROR!", a, b, c, d);
+//   console.log(a, b, c, d);
+// }
 
 // Init App..
 window.App = window.App || {};
@@ -21,9 +21,9 @@ window.App.datalayer = {
   },
   currentStocksForCurrentView: [], // on portfolio view page these are all the stocks we are seeing
   currentPortfolioCash: 0,
-  currentStockPrices: {
-    
-  }
+  currentStockPrices: {},
+  currentStockReturnValue: {},
+  stockTransactions: []
 };
 
 window.App.isLocalHost = window.location.href.indexOf('~mc332') === -1;
@@ -33,6 +33,7 @@ var prefix = window.App.isLocalHost ? '' : '/~mc332/cs673';
 // Endpoints will go here
 window.App.endpoints = {
   login: prefix + '/apis/login.php',
+  rebalance: prefix + '/apis/rebalance.php',
   addCashPortfolio: prefix + '/apis/addCashPortfolio.php',
   buyStock: prefix + '/apis/buyStock.php',
   sellStock: prefix + '/apis/sellStock.php',
@@ -44,6 +45,7 @@ window.App.endpoints = {
   getUserPortfolio: prefix + '/apis/getUserPortfolios.php',
   getPortfolioById: prefix + '/apis/getPortfolioById.php',
   getUserInfo: prefix + '/apis/getUserInfo.php',
+  downloadPortfolio: prefix + "/apis/report.php",
   getStockInfo: 'https://web.njit.edu/~mc332/webapps8/hello2'
 }
 
@@ -133,3 +135,8 @@ $.get('https://www.google.com/search?q=INR+conversoin+rate', function (data) {
 setTimeout(function () {
   window.indiaConverionRate = window.indiaConverionRate || 0.014;
 }, 1000);
+
+
+function downloadPortfolio () {
+  window.location.href = window.App.endpoints.downloadPortfolio;
+}

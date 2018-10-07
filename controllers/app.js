@@ -110,7 +110,7 @@ function initLoginScreen() {
 
 function formatPrice(price) {
   try {
-    return parseFloat(price).toFixed(2);
+    return parseFloat(parseFloat(price).toFixed(2));
   } catch (error) {
     return price;
   }

@@ -305,3 +305,62 @@ function isIndianStock(ticker) {
   return isIndian;
 }
 
+function getCashValue () {
+  return formatPrice(App.datalayer.currentPortfolioCash)
+}
+
+function getToalUsStocksValue () {
+  var stocks = App.datalayer.currentStocksForCurrentView;
+  var usStocksValue = 0;
+  var stockPriceMap = App.datalayer.currentStockPrices
+
+  for (var index = 0; index < stocks.length; index++) {
+    var stock = stocks[index];
+    var isIndian = isIndianStock(stock.id);
+
+    if (!isIndian) {
+      usStocksValue += (stock.qty * stockPriceMap[stock.id])
+    }
+
+  }
+
+  return formatPrice(usStocksValue);
+}
+
+function getToalIndiaStocksValue () {
+  var stocks = App.datalayer.currentStocksForCurrentView;
+  var indiaStocksValue = 0;
+  var stockPriceMap = App.datalayer.currentStockPrices
+
+  for (var index = 0; index < stocks.length; index++) {
+    var stock = stocks[index];
+    var isIndian = isIndianStock(stock.id);
+
+    if (isIndian) {
+      indiaStocksValue += (stock.qty * stockPriceMap[stock.id])
+    }
+
+  }
+
+  return formatPrice(indiaStocksValue);
+}
+
+function renderPercentageAllocation () {
+  var cash = getCashValue();
+  var usStocks = getToalUsStocksValue();
+  var indiaStocks = getToalIndiaStocksValue();
+  
+  var total = cash + usStocks + indiaStocks;
+
+  var cashPercent = formatPrice((cash / total) * 100);
+  var usPercent = formatPrice((usStocks / total) * 100);
+  var indiaPercent = formatPrice((indiaStocks / total) * 100);
+  
+  console.log('');
+  
+  $("#cash-percent").html(cashPercent);
+  $("#us-percent").html(usPercent);
+  $("#india-percent").html(indiaPercent);
+}
+
+setInterval(renderPercentageAllocation, 1000);

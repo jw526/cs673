@@ -6,6 +6,7 @@
     $domesticStockValue = $_POST['domesticStockValue'];
     $foreignStockValue = $_POST['foreignStockValue'];
 
+    $function = $_POST['function'];
 
     /* $sql = "select ? from $portfolio_id";  //get the total portfolio value
     $totalPortfolioValue = mysqli_query($dbc, $sql);
@@ -20,10 +21,15 @@
     $cash = mysqli_query($dbc, $sql); */
 
     function needRebalance($cash, $domesticStockValue, $foreignStockValue) {
-        if (($cash > 0.1 * $totalPortfolioValue) or ($domesticStockValue/($domesticStockValue + $foreignStockValue) < 0.7)){
-            return true;
+
+        if ($domesticStockValue == 0 || $foreignStockValue == 0) {
+            return 'FALSE';
         }
-        return false;
+
+        if (($cash > 0.1 * $totalPortfolioValue) or ($domesticStockValue/($domesticStockValue + $foreignStockValue) > 0.7)){
+            return 'TRUE';
+        }
+        return 'FALSE';
     }
 
     function rebalance($cash, $domesticStockValue, $foreignStockValue){
@@ -84,5 +90,19 @@
             }
         }    
     }
+  
     
+    if ($function == 'needRebalance') {
+        echo needRebalance($cash, $domesticStockValue, $foreignStockValue);
+    }
+
+    if ($function == 'rebalance') {
+        echo rebalance($cash, $domesticStockValue, $foreignStockValue);
+    }
+
+
+    // usStockLeastReturnTicker,
+    // usStockMostReturnTicker,
+    // indiaStockLeastReturnTicker,
+    // indiaStockMostReturnTicker
 ?>

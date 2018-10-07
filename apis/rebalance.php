@@ -2,8 +2,12 @@
     include('./__init__.php');
     global $dbc;
     $portfolio_id = $_POST['portfolio_id'];
+    $cash = $_POST['cash'];
+    $domesticStockValue = $_POST['domesticStockValue'];
+    $foreignStockValue = $_POST['foreignStockValue'];
 
-    $sql = "select ? from $portfolio_id";  //get the total portfolio value
+
+    /* $sql = "select ? from $portfolio_id";  //get the total portfolio value
     $totalPortfolioValue = mysqli_query($dbc, $sql);
 
     $sql = "select ? from $portfolio_id"; //get the domestic stock value
@@ -13,10 +17,10 @@
     $foreignStockValue = mysqli_query($dbc, $sql);
 
     $sql = "Select ? from $portfolio_id"; //get the available cash
-    $cash = mysqli_query($dbc, $sql);
+    $cash = mysqli_query($dbc, $sql); */
 
     function needRebalance($cash, $domesticStockValue, $foreignStockValue) {
-        if (($cash > 0.1 * $totalPortfolioValue) or ($domesticStockValue/($domesticStockValue + $foreignStockValue))){
+        if (($cash > 0.1 * $totalPortfolioValue) or ($domesticStockValue/($domesticStockValue + $foreignStockValue) < 0.7)){
             return true;
         }
         return false;

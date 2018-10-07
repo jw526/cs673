@@ -193,7 +193,14 @@ window.App = window.App || {};
 
         function addStockValueToCashAccunt(stock) {
           _getStockPrice(stock.id, function (price) {
-            addToCashAccount(stock.qty * price, _loadCashAccount);
+            var isIndia = isIndianStock(stock.id);
+            var usds = price;
+
+            if (isIndia) {
+              usds = price * window.indiaConverionRate;
+            }
+
+            addToCashAccount(stock.qty * usds, _loadCashAccount);
           });
         }
 

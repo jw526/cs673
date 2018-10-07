@@ -288,6 +288,7 @@ function renderStockCurrentPrices (arrayOfTickers) {
   }
 
   function render(ticker) {
+    //console.log(ticker);
     _getStockPrice(ticker, function (price) {
       var isIndia = isIndianStock(ticker);
       var truePrice = price;
@@ -316,6 +317,10 @@ function _getStockPrice(ticker, callback) {
     if (ticker.split('.')[0] == stock.split('.')[0].split('-')[0]) {
       patchTicker = stock
     }
+    if (ticker.split('.')[0] == stock.split('.')[0]) {
+      patchTicker = stock
+    }
+
   }
 
   //console.log('getting price for ', patchTicker || ticker);
@@ -334,6 +339,9 @@ function isIndianStock(ticker) {
   for (var index = 0; index < indiaStocks.length; index++) {
     var stock = indiaStocks[index];
     if (ticker.split('.')[0] == stock.split('.')[0].split('-')[0]) {
+      isIndian = true
+    }
+    if (ticker.split('.')[0] == stock.split('.')[0]) {
       isIndian = true
     }
   }

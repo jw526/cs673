@@ -254,6 +254,8 @@ window.App = window.App || {};
     table.html('');
     table.append(temp);
 
+    window.App.datalayer.stockTransactions = res.stocks;
+
     var isTransactionsView = window.location.href.indexOf(window.App.pages.portfolioView) === -1;
 
     var stocks = isTransactionsView

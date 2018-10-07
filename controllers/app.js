@@ -22,7 +22,8 @@ window.App.datalayer = {
   currentStocksForCurrentView: [], // on portfolio view page these are all the stocks we are seeing
   currentPortfolioCash: 0,
   currentStockPrices: {},
-  currentStockReturnValue: {}
+  currentStockReturnValue: {},
+  stockTransactions: []
 };
 
 window.App.isLocalHost = window.location.href.indexOf('~mc332') === -1;

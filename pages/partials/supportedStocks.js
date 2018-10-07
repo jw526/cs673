@@ -93,3 +93,8 @@ var categoryIndiaStocks = []
 for (var index = 0; index < indiaStocks.length; index++) {
   categoryIndiaStocks.push({ label: indiaStocks[index], category: "India Nifty Fifty" });
 }
+
+
+var septemberPriceMap = {
+  'AAPL': 2
+}

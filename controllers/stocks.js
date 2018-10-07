@@ -129,7 +129,13 @@ window.App = window.App || {};
       company_name: !isDow30 ? stock : stock.split(":")[1]
     }
 
-    _getStockPrice(window.App.datalayer.searchStockData.ticker, function (price) {
+    var ticker = patchTicker(window.App.datalayer.searchStockData.ticker);
+
+    _getStockPrice(ticker, function (price) {
+      if (isFirstTimeBuyer(ticker)) {
+        price = window.septemberPriceMap[ticker] || 0
+      }
+
       // Display Info
       $("#stock-modal-title").html(stock);
       $('#view-stock-modal').modal();
@@ -304,6 +310,20 @@ function renderStockCurrentPrices (arrayOfTickers) {
   }
 }
 
+function patchTicker (ticker) {
+  for (var index = 0; index < indiaStocks.length; index++) {
+    var stock = indiaStocks[index];
+    if (ticker.split('.')[0] == stock.split('.')[0].split('-')[0]) {
+      return stock
+    }
+    if (ticker.split('.')[0] == stock.split('.')[0]) {
+      return stock
+    }
+  }
+
+  return ticker;
+}
+
 
 function _getStockPrice(ticker, callback) {
   var patchTicker;
@@ -322,6 +342,8 @@ function _getStockPrice(ticker, callback) {
     }
 
   }
+
+
 
   //console.log('getting price for ', patchTicker || ticker);
   
@@ -589,4 +611,18 @@ try {
 }
 }
 
+
+function isFirstTimeBuyer (ticker) {
+  var firstTime = true;
+  var trans = window.App.datalayer.stockTransactions;
+
+  for (var index = 0; index < trans.length; index++) {
+    var tran = trans[index];
+    if (tran.id == ticker) {
+      firstTime = false;
+    }
+  }
+
+  return firstTime;
+}
 

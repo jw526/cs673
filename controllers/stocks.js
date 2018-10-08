@@ -145,11 +145,11 @@ window.App = window.App || {};
       // Display Info
       $("#stock-modal-title").html(stock);
       $('#view-stock-modal').modal();
-      $("#search-stock-price").html(price);
+      $("#search-stock-price").html(parseFloat(price).toFixed(2));
 
       if (!isDow30) {
         $("#search-stock-price").html(
-          formatPrice(price * window.indiaConverionRate) + " (" + price + "INR)"
+          parseFloat(price * window.indiaConverionRate).toFixed(2) + " (" + parseFloat(price).toFixed(2) + "INR)"
           );
         price = price * window.indiaConverionRate;
       }

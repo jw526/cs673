@@ -63,7 +63,7 @@ window.App = window.App || {};
 
     var myStock = {};
     var currentPrice = window.App.datalayer.currentStockPrices[selectedStockId];
-
+    
     for (var index = 0; index < stocksInPortfolio.length; index++) {
       var stock = stocksInPortfolio[index];
       if (patchTicker(stock.id) == selectedStockId) {
@@ -76,11 +76,17 @@ window.App = window.App || {};
       return alert('You only have ' + myStock.qty)
     }
 
+     if (isIndianStock(myStock.id)) {
+        currentPrice = currentPrice * indiaConverionRate;
+     }
+    
 
     var datalayer = window.App.datalayer;
     var porfolioId = window.getCurrentPortfolioId();
     var totalValue = amountToSell * currentPrice;
 
+
+    
     $.ajax(window.App.endpoints.sellStock, {
       method: 'post',
       success: function (data) {

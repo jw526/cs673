@@ -343,8 +343,6 @@ function _getStockPrice(ticker, callback) {
 
   }
 
-
-
   //console.log('getting price for ', patchTicker || ticker);
   
   $.get(window.App.endpoints.getStockInfo + "?ticket=" + (patchTicker || ticker), function (price) {
@@ -615,10 +613,11 @@ try {
 function isFirstTimeBuyer (ticker) {
   var firstTime = true;
   var trans = window.App.datalayer.stockTransactions;
-
+  console.log('');
+  
   for (var index = 0; index < trans.length; index++) {
     var tran = trans[index];
-    if (tran.id == ticker) {
+    if (patchTicker(tran.id) == patchTicker(ticker)) {
       firstTime = false;
     }
   }

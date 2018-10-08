@@ -276,7 +276,7 @@ window.App = window.App || {};
       var template = $("#portfolio-row-template").clone(true);
 
       // Set Data
-      template.children('.id').html(portfolio.id);
+      template.children('.id').html(patchTicker(portfolio.id));
       template.children('.qty').html(portfolio.qty);
       template.children('.buy-price').html('$' + portfolio.price);
       template.children('.action').html(portfolio.action);

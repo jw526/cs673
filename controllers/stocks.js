@@ -76,9 +76,9 @@ window.App = window.App || {};
       return alert('You only have ' + myStock.qty)
     }
 
-     if (isIndianStock(myStock.id)) {
-        currentPrice = currentPrice * indiaConverionRate;
-     }
+    //  if (isIndianStock(myStock.id)) {
+    //     currentPrice = currentPrice * indiaConverionRate;
+    //  }
     
 
     var datalayer = window.App.datalayer;

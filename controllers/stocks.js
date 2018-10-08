@@ -326,26 +326,9 @@ function patchTicker (ticker) {
 
 
 function _getStockPrice(ticker, callback) {
-  var patchTicker;
-
-  if (!ticker) {
-    return;
-  }
-
-  for (var index = 0; index < indiaStocks.length; index++) {
-    var stock = indiaStocks[index];
-    if (ticker.split('.')[0] == stock.split('.')[0].split('-')[0]) {
-      patchTicker = stock
-    }
-    if (ticker.split('.')[0] == stock.split('.')[0]) {
-      patchTicker = stock
-    }
-
-  }
-
-  //console.log('getting price for ', patchTicker || ticker);
+  var _patchTicker = patchTicker(ticker);
   
-  $.get(window.App.endpoints.getStockInfo + "?ticket=" + (patchTicker || ticker), function (price) {
+  $.get(window.App.endpoints.getStockInfo + "?ticket=" + _patchTicker, function (price) {
     var clean = price.replace(/,|</g, "");
     var float = parseFloat(clean).toFixed(2);
     callback(float);

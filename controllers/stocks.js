@@ -66,7 +66,7 @@ window.App = window.App || {};
 
     for (var index = 0; index < stocksInPortfolio.length; index++) {
       var stock = stocksInPortfolio[index];
-      if (stock.id == selectedStockId) {
+      if (patchTicker(stock.id) == selectedStockId) {
         myStock = stock;
       }
     }

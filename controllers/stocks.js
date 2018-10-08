@@ -474,7 +474,7 @@ function rebalance() {
   });
 }
 
-setInterval(renderPercentageAllocation, 1000);
+setTimeout(renderPercentageAllocation, 1000);
 
 
 function calculateReturnValue (ticker, livePrice) {

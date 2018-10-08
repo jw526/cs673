@@ -3,19 +3,19 @@
     global $dbc;
 
     $function = $_POST['function'];
-    $$portfolio_id = 86; //$_POST['$portfolio_id'];
-    $user_id = 'admin'; //$_POST['user_id'];
-    $tickerDomesticMostReturn = 'AAPL'; //$_POST['tickerDomesticMostReturn'];
-    $tickerDomesticLeastReturn = 'AAPL'; //$_POST['tickerDomesticLeastReturn'];
-    $tickerForeignMostReturn = 'ONGC.NS'; //$_POST['tickerForeignMostReturn'];
-    $tickerForeignLeastReturn = 'ONGC.NS'; //$_POST['tickerForeignLeastReturn'];
-    $domesticMostReturnPrice = 10; //$_POST['domesticMostReturnPrice'];
-    $domesticLeastReturnPrice = 10; //$_POST['domesticLeastReturnPrice'];
-    $foreignMostReturnPrice = 2; //$_POST['foreignMostReturnPrice'];
-    $foreignLeastReturnPrice = 2; //$_POST['foreignLeastReturnPrice'];
-    $domesticStockValue = 700; //$_POST['domesticStockValue'];
-    $foreignStockValue = 300; //$_POST['foreignStockValue']; 
-    $cash = 500; //$_POST['cash']; 
+    $$portfolio_id = $_POST['$portfolio_id'];
+    $user_id = $_POST['user_id'];
+    $tickerDomesticMostReturn = $_POST['tickerDomesticMostReturn'];
+    $tickerDomesticLeastReturn = $_POST['tickerDomesticLeastReturn'];
+    $tickerForeignMostReturn = $_POST['tickerForeignMostReturn'];
+    $tickerForeignLeastReturn = $_POST['tickerForeignLeastReturn'];
+    $domesticMostReturnPrice = $_POST['domesticMostReturnPrice'];
+    $domesticLeastReturnPrice = $_POST['domesticLeastReturnPrice'];
+    $foreignMostReturnPrice = $_POST['foreignMostReturnPrice'];
+    $foreignLeastReturnPrice = $_POST['foreignLeastReturnPrice'];
+    $domesticStockValue = $_POST['domesticStockValue'];
+    $foreignStockValue = $_POST['foreignStockValue']; 
+    $cash = $_POST['cash']; 
     $totalPortfolioValue = $domesticStockValue + $foreignStockValue + $cash;
 
 

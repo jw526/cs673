@@ -13,10 +13,10 @@
     $domesticLeastReturnPrice = $_POST['domesticLeastReturnPrice'];
     $foreignMostReturnPrice = $_POST['foreignMostReturnPrice'];
     $foreignLeastReturnPrice = $_POST['foreignLeastReturnPrice'];
-    $domesticStockValue = 700;
-    $foreignStockValue = 200; 
-    $cash = 0;  
-    $totalPortfolioValue = 900; //$domesticStockValue + $foreignStockValue + $cash;
+    $domesticStockValue = $_POST['domesticStockValue'];
+    $foreignStockValue = $_POST['foreignStockValue']; 
+    $cash = $_POST['cash']; 
+    $totalPortfolioValue = $domesticStockValue + $foreignStockValue + $cash;
 
 
 

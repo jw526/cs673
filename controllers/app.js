@@ -118,6 +118,8 @@ function formatPrice(price) {
   }
 }
 
+// In case the parser fails it will defualt to this
+window.indiaConverionRate = window.indiaConverionRate || 0.014;
 $.get('https://www.google.com/search?q=INR+conversoin+rate', function (data) {
 
   try {
@@ -132,9 +134,7 @@ $.get('https://www.google.com/search?q=INR+conversoin+rate', function (data) {
 
 })
 
-setTimeout(function () {
-  window.indiaConverionRate = window.indiaConverionRate || 0.014;
-}, 1000);
+
 
 
 function downloadPortfolio () {

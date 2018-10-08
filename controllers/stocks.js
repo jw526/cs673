@@ -420,7 +420,7 @@ function triggerPossibleAutoMergeMessage (args) {
   $.ajax(window.App.endpoints.rebalance, {
     method: 'post',
     success: function (data) {
-      if (data.needRebalance == 'TRUE') {
+      if (data.needRebalance) {
         $("#auto-balance-error").html(message);
         $("#auto-balance-error").append(button);
       } else {

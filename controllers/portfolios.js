@@ -270,7 +270,7 @@ window.App = window.App || {};
     // store stocks for latter use
     window.App.datalayer.currentStocksForCurrentView = stocks;
     
-    setTimeout(renderPercentageAllocation, 100);
+    setTimeout(renderPercentageAllocation, 1000);
 
     for (var index = 0; index < stocks.length; index++) {
       var portfolio = stocks[index];

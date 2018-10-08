@@ -309,7 +309,7 @@ function renderStockCurrentPrices (arrayOfTickers) {
         truePrice = formatPrice(price * window.indiaConverionRate);
       }
       
-      $("#stock-ticker-" + ticker.replace(/\.|&/, "_")).html(truePrice);
+      $("#stock-ticker-" + ticker.replace(/\.|&/, "_")).html(truePrice.toFixed(2));
       window.App.datalayer.currentStockPrices[ticker] = truePrice;
       window.App.datalayer.currentStockPrices[patchTicker(ticker)] = truePrice;
       window.App.datalayer.currentStockReturnValue[ticker] = calculateReturnValue(ticker, truePrice);

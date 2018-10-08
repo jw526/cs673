@@ -32,7 +32,7 @@ window.App = window.App || {};
         var transactions = data.cashTransactions;
         var totalCashLeft = getTotalCashByTransaction(transactions);
         window.App.datalayer.currentPortfolioCash = totalCashLeft || 0;
-        $("#cash-account-balance").html(totalCashLeft || 0);
+        $("#cash-account-balance").html(totalCashLeft.toFixed(2) || 0);
       },
       data: {
         portfolioId: 0
@@ -53,7 +53,7 @@ window.App = window.App || {};
           return callback(totalCashLeft);
         }
         window.App.datalayer.currentPortfolioCash = formatPrice(totalCashLeft) || 0;
-        $("#cash-account-balance").html(formatPrice(totalCashLeft) || 0);
+        $("#cash-account-balance").html(formatPrice(totalCashLeft).toFixed(2) || 0);
       },
       data: {
         portfolioId: portfolioId || 0
@@ -285,7 +285,7 @@ window.App = window.App || {};
       template.children('.date').html(portfolio.transaction_date);
       template.children('.total-spent').html('$' + portfolio.totalSpent);
 
-      template.children('.current-value').attr('id', 'stock-ticker-' + portfolio.id.replace(/\.|&/, "_"))
+      template.children('.current-value').attr('id', 'stock-ticker-' + portfolio.id.replace(/\.|&/, "_"));
 
       // Remove not needed attributes
       template.removeClass('template');

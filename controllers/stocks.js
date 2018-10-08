@@ -311,6 +311,7 @@ function renderStockCurrentPrices (arrayOfTickers) {
       
       $("#stock-ticker-" + ticker.replace(/\.|&/, "_")).html(truePrice);
       window.App.datalayer.currentStockPrices[ticker] = truePrice;
+      window.App.datalayer.currentStockPrices[patchTicker(ticker)] = truePrice;
       window.App.datalayer.currentStockReturnValue[ticker] = calculateReturnValue(ticker, truePrice);
     });
   }

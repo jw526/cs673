@@ -430,6 +430,8 @@ function triggerPossibleAutoMergeMessage (args) {
 }
 
 function renderPercentageAllocation () {
+  return;
+
   var cash = getCashValue();
   var usStocks = getToalUsStocksValue();
   var indiaStocks = getToalIndiaStocksValue();

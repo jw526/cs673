@@ -475,7 +475,7 @@ function rebalance() {
 }
 
 setTimeout(renderPercentageAllocation, 1000);
-
+setInterval(renderPercentageAllocation, 3000);
 
 function calculateReturnValue (ticker, livePrice) {
   try {

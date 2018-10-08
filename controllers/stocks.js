@@ -406,24 +406,31 @@ function triggerPossibleAutoMergeMessage (args) {
   var message = '(WARNING: Your portfolio needs to be re-balance to follow the 70/30 rule)';
   var button = "<button style='font-size: 10px' onclick='window.rebalance()'> Auto Balance</button>";
 
-  $.ajax(window.App.endpoints.rebalance, {
-    method: 'post',
-    success: function (data) {
-      if (data.needRebalance) {
-        $("#auto-balance-error").html(message);
-        $("#auto-balance-error").append(button);
-      } else {
-        $("#auto-balance-error").html('');
-      }
-    },
-    data: {
-      portfolio_id: window.getCurrentPortfolioId(),
-      cash: getCashValue(),
-      domesticStockValue: getToalUsStocksValue(),
-      foreignStockValue: getToalIndiaStocksValue(),
-      function: 'needRebalance'
+  if (usPercent > 0 && indiaPercent > 0) {
+      $("#auto-balance-error").html(message);
+      $("#auto-balance-error").append(button);
+    } else {
+      $("#auto-balance-error").html('');
     }
-  });
+
+  // $.ajax(window.App.endpoints.rebalance, {
+  //   method: 'post',
+  //   success: function (data) {
+  //     if (data.needRebalance) {
+  //       $("#auto-balance-error").html(message);
+  //       $("#auto-balance-error").append(button);
+  //     } else {
+  //       $("#auto-balance-error").html('');
+  //     }
+  //   },
+  //   data: {
+  //     portfolio_id: window.getCurrentPortfolioId(),
+  //     cash: getCashValue(),
+  //     domesticStockValue: getToalUsStocksValue(),
+  //     foreignStockValue: getToalIndiaStocksValue(),
+  //     function: 'needRebalance'
+  //   }
+  // });
 
 
 

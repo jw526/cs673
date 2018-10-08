@@ -3,19 +3,19 @@
     global $dbc;
 
     $function = $_POST['function'];
-    $$portfolio_id = $_POST['$portfolio_id'];
-    $user_id = $_POST['user_id'];
-    $tickerDomesticMostReturn = $_POST['tickerDomesticMostReturn'];
-    $tickerDomesticLeastReturn = $_POST['tickerDomesticLeastReturn'];
-    $tickerForeignMostReturn = $_POST['tickerForeignMostReturn'];
-    $tickerForeignLeastReturn = $_POST['tickerForeignLeastReturn'];
-    $domesticMostReturnPrice = $_POST['domesticMostReturnPrice'];
-    $domesticLeastReturnPrice = $_POST['domesticLeastReturnPrice'];
-    $foreignMostReturnPrice = $_POST['foreignMostReturnPrice'];
-    $foreignLeastReturnPrice = $_POST['foreignLeastReturnPrice'];
-    $domesticStockValue = $_POST['domesticStockValue'];
-    $foreignStockValue = $_POST['foreignStockValue']; 
-    $cash = $_POST['cash']; 
+    $$portfolio_id = 86; //$_POST['$portfolio_id'];
+    $user_id = 'admin'; //$_POST['user_id'];
+    $tickerDomesticMostReturn = 'AAPL'; //$_POST['tickerDomesticMostReturn'];
+    $tickerDomesticLeastReturn = 'AAPL'; //$_POST['tickerDomesticLeastReturn'];
+    $tickerForeignMostReturn = 'ONGC.NS'; //$_POST['tickerForeignMostReturn'];
+    $tickerForeignLeastReturn = 'ONGC.NS'; //$_POST['tickerForeignLeastReturn'];
+    $domesticMostReturnPrice = 10; //$_POST['domesticMostReturnPrice'];
+    $domesticLeastReturnPrice = 10; //$_POST['domesticLeastReturnPrice'];
+    $foreignMostReturnPrice = 2; //$_POST['foreignMostReturnPrice'];
+    $foreignLeastReturnPrice = 2; //$_POST['foreignLeastReturnPrice'];
+    $domesticStockValue = 700; //$_POST['domesticStockValue'];
+    $foreignStockValue = 300; //$_POST['foreignStockValue']; 
+    $cash = 500; //$_POST['cash']; 
     $totalPortfolioValue = $domesticStockValue + $foreignStockValue + $cash;
 
 
@@ -94,7 +94,7 @@
             return false; 
         } 
 
-        if (($cash > $totalPortfolioValue/10) || ($domesticStockValue/($domesticStockValue + $foreignStockValue) <> 0.7)){
+        if (($cash > 0.1 * $totalPortfolioValue) || ($domesticStockValue/($domesticStockValue + $foreignStockValue) <> 0.7)){
             return true;
         }
         return false;
@@ -119,36 +119,36 @@
                 buy ($portfolio_id, $user_id, 'Dow-30', $tickerDomesticMostReturn, $tickerDomesticMostReturn, $sharesToBuy, $domesticMostReturnPrice);
             }
     
-        } else {
-            //domestic is underweight
-            if($domesticStockValue/($domesticStockValue + $foreignStockValue) < 0.7){
-                $domesticBuyAmt = 0.7 * ($domesticStockValue + $foreignStockValue) - $domesticStockValue;
-                //not enough cash to cover the buy amount
-                if($domesticBuyAmt < $cash){
-                    $foreignSellAmt = $domesticBuyAmt - $cash;
-                    $sharesToSell = $foreignSellAmt / $foreignLeastReturnPrice;
-                    //sell the stock from foreign stocks with the least return since purchase
-                    sell ($portfolio_id, $user_id, 'BSE/NSE', $tickerForeignLeastReturn, $tickerForeignLeastReturn, $sharesToSell, $foreignLeastReturnPrice);
-                }
-                //buy domestic with the most return since purchase
-                $sharesToBuy = $domesticBuyAmt / $domesticMostReturnPrice;
-                buy ($portfolio_id, $user_id, 'Dow-30', $tickerDomesticMostReturn, $tickerDomesticMostReturn, $sharesToBuy, $domesticMostReturnPrice);
-        
+        } 
+        //domestic is underweight
+        if($domesticStockValue/($domesticStockValue + $foreignStockValue) < 0.7){
+            $domesticBuyAmt = 0.7 * ($domesticStockValue + $foreignStockValue) - $domesticStockValue;
+            //not enough cash to cover the buy amount
+            if($domesticBuyAmt < $cash){
+                $foreignSellAmt = $domesticBuyAmt - $cash;
+                $sharesToSell = $foreignSellAmt / $foreignLeastReturnPrice;
+                //sell the stock from foreign stocks with the least return since purchase
+                sell ($portfolio_id, $user_id, 'BSE/NSE', $tickerForeignLeastReturn, $tickerForeignLeastReturn, $sharesToSell, $foreignLeastReturnPrice);
             }
-            //domestic is overweight
-            if($domesticStockValue/($domesticStockValue + $foreignStockValue) > 0.7){
-                $foreignBuyAmt = $domesticStockValue/0.7 - $domesticStockValue - $foreignStockValue;
-                if ($foreignBuyAmt < $cash) {
-                    $domesticSellAmt = $foreignBuyAmt - $cash;
-                    $sharesToSell = $domesticSellAmt / $domesticLeastReturnPrice;
-                    //sell the stock from domestic stocks with the least return since purchase
-                    sell ($portfolio_id, $user_id, 'Dow-30', $tickerDomesticLeastReturn, $tickerDomesticLeastReturn, $sharesToSell, $domesticLeastReturnPrice);
-                }
-                //buy foreign with the most return since purchase
-                $sharesToBuy = $foreignBuyAmt / $foreignMostReturnPrice;
-                buy ($portfolio_id, $user_id, 'BSE/NSE', $tickerDomesticMostReturn, $tickerForeignMostReturn, $sharesToBuy, $foreignMostReturnPrice);
+            //buy domestic with the most return since purchase
+            $sharesToBuy = $domesticBuyAmt / $domesticMostReturnPrice;
+            buy ($portfolio_id, $user_id, 'Dow-30', $tickerDomesticMostReturn, $tickerDomesticMostReturn, $sharesToBuy, $domesticMostReturnPrice);
+    
+        }
+        //domestic is overweight
+        else{
+            $foreignBuyAmt = $domesticStockValue/0.7 - $domesticStockValue - $foreignStockValue;
+            if ($foreignBuyAmt < $cash) {
+                $domesticSellAmt = $foreignBuyAmt - $cash;
+                $sharesToSell = $domesticSellAmt / $domesticLeastReturnPrice;
+                //sell the stock from domestic stocks with the least return since purchase
+                sell ($portfolio_id, $user_id, 'Dow-30', $tickerDomesticLeastReturn, $tickerDomesticLeastReturn, $sharesToSell, $domesticLeastReturnPrice);
             }
-        }    
+            //buy foreign with the most return since purchase
+            $sharesToBuy = $foreignBuyAmt / $foreignMostReturnPrice;
+            buy ($portfolio_id, $user_id, 'BSE/NSE', $tickerDomesticMostReturn, $tickerForeignMostReturn, $sharesToBuy, $foreignMostReturnPrice);
+        }
+            
     }
 
     if ($function == 'needRebalance') {

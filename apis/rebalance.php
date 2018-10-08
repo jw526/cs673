@@ -13,9 +13,10 @@
     $domesticLeastReturnPrice = $_POST['domesticLeastReturnPrice'];
     $foreignMostReturnPrice = $_POST['foreignMostReturnPrice'];
     $foreignLeastReturnPrice = $_POST['foreignLeastReturnPrice'];
-    $domesticStockValue = 110.0;
-    $foreignStockValue = 30; 
-    $cash = 5;
+    $domesticStockValue = 700;
+    $foreignStockValue = 200; 
+    $cash = 0;  
+    $totalPortfolioValue = 900; //$domesticStockValue + $foreignStockValue + $cash;
 
 
 
@@ -88,17 +89,21 @@
     }
 
     function needRebalance() {
-        if ($domesticStockValue == 0 || $foreignStockValue == 0){
-            return false;
-        }
+        global $domesticStockValue, $foreignStockValue, $cash, $totalPortfolioValue;
+        if ($domesticStockValue == 0 || $foreignStockValue == 0) {
+            return false; 
+        } 
 
-        if (($cash > 0.1 * $totalPortfolioValue) or ($domesticStockValue/($domesticStockValue + $foreignStockValue) > 0.7)){
+        if (($cash > $totalPortfolioValue/10) || ($domesticStockValue/($domesticStockValue + $foreignStockValue) <> 0.7)){
             return true;
         }
         return false;
     }
 
     function rebalance(){
+        global $portfolio_id, $user_id, $domesticStockValue, $foreignStockValue, $cash, $totalPortfolioValue, 
+        $tickerDomesticMostReturn, $tickerDomesticLeastReturn, $tickerForeignLeastReturn, $tickerForeignMostReturn,
+        $domesticLeastReturnPrice, $domesticMostReturnPrice, $foreignLeastReturnPrice, $foreignMostReturnPrice; 
         // if cash is greater than 10% of the total portfolio value, buy underweight asset (foreign/domestic)
         if ($cash > 0.1 * $totalPortfolioValue){
             $buyAmt = $cash - 0.1 * $totalPortfolioValue;

@@ -36,37 +36,38 @@
     echo( "\n" .$conversionRate); */
 
     function buy($portfolio_id, $stock_market, $ticker, $company_name, $quantity, $price){
-        $sql = "
-        INSERT INTO transactions (portfolio_id,
-                                  user_id, 
-                                  stock_market, 
-                                  ticker, 
-                                  company_name,
-                                  quantity,
-                                  price,
-                                  transaction_action,
-                                  transaction_timestamp)
-            VALUES ('$portfolio_id',
-                    '$_SESSION[user_id]',
-                    '$stock_market',
-                    '$ticker',
-                    '$company_name',
-                    '$quantity',
-                    '$price',
-                    'buy',
-                    NOW());
-        ";
+        // $sql = "
+        // INSERT INTO transactions (portfolio_id,
+        //                           user_id, 
+        //                           stock_market, 
+        //                           ticker, 
+        //                           company_name,
+        //                           quantity,
+        //                           price,
+        //                           transaction_action,
+        //                           transaction_timestamp)
+        //     VALUES ('$portfolio_id',
+        //             '$_SESSION[user_id]',
+        //             '$stock_market',
+        //             '$ticker',
+        //             '$company_name',
+        //             '$quantity',
+        //             '$price',
+        //             'buy',
+        //             NOW());
+        // ";
 
-        $result = mysqli_query($dbc, $sql);
+        // $result = mysqli_query($dbc, $sql);
 
         // Convert To JSON and send back
         $obj = (object) [
-            'buy' => $sql
+            'buy' => $ticker,
+            'quantity' => $quantity
         ];
         echo json_encode($obj);
 
-        /* Close Connection */
-        mysqli_close($dbc);
+        // /* Close Connection */
+        // mysqli_close($dbc);
     }
     ///////////////////////////////////////////////////////////////////////////////
     //////////////testing dummy buy     //////////////////////////////////////////
@@ -75,37 +76,38 @@
     //buy (92, 'Dow-30', 'AAPL', 'Apple', 0.11, 134.98);
 
     function sell($portfolio_id, $stock_market, $ticker, $company_name, $quantity, $price){
-        $sql = "
-        INSERT INTO transactions (portfolio_id,
-                                  user_id, 
-                                  stock_market, 
-                                  ticker, 
-                                  company_name,
-                                  quantity,
-                                  price,
-                                  transaction_action,
-                                  transaction_timestamp)
-            VALUES ('$portfolio_id',
-                    '$_SESSION[user_id]',
-                    '$stock_market',
-                    '$ticker',
-                    '$company_name',
-                    '$quantity',
-                    '$price',
-                    'sell',
-                    NOW());
-        ";
+        // $sql = "
+        // INSERT INTO transactions (portfolio_id,
+        //                           user_id, 
+        //                           stock_market, 
+        //                           ticker, 
+        //                           company_name,
+        //                           quantity,
+        //                           price,
+        //                           transaction_action,
+        //                           transaction_timestamp)
+        //     VALUES ('$portfolio_id',
+        //             '$_SESSION[user_id]',
+        //             '$stock_market',
+        //             '$ticker',
+        //             '$company_name',
+        //             '$quantity',
+        //             '$price',
+        //             'sell',
+        //             NOW());
+        // ";
 
-        $result = mysqli_query($dbc, $sql);
+        // $result = mysqli_query($dbc, $sql);
 
         // Convert To JSON and send back
         $obj = (object) [
-            'sell' => $sql
+            'sell' => $ticker,
+            'quantity' => $quantity
         ];
         echo json_encode($obj);
 
-        /* Close Connection */
-        mysqli_close($dbc);
+        // /* Close Connection */
+        // mysqli_close($dbc);
     }
 
     function needRebalance() {

@@ -469,6 +469,7 @@ function rebalance() {
     success: function (data) {
       console.log(data);
       window.App.Portfolio.loadPortfolioById();
+      alert('WE WILL EXECUTE: ' + JSON.stringify(data));
     },
     data: {
       portfolio_id: window.getCurrentPortfolioId(),

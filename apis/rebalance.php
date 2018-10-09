@@ -75,7 +75,7 @@
 
     //buy (92, 'Dow-30', 'AAPL', 'Apple', 0.11, 134.98);
 
-    function sell($portfolio_id, $stock_market, $ticker, $company_name, $quantity, $price){
+    function sell ($portfolio_id, $stock_market, $ticker, $company_name, $quantity, $price){
         // $sql = "
         // INSERT INTO transactions (portfolio_id,
         //                           user_id, 
@@ -177,7 +177,7 @@
                 array_push($obj->sell, (object) [
                     portfolio_id => $portfolio_id,
                     market => 'BSE/NSE',
-                    qty => $sharesToBuy,
+                    qty => $sharesToSell,
                     ticket => $tickerForeignLeastReturn,
                     price => $foreignLeastReturnPrice
                 ]);  
@@ -207,7 +207,7 @@
                 array_push($obj->sell, (object) [
                     portfolio_id => $portfolio_id,
                     market => 'Dow-30',
-                    qty => $sharesToBuy,
+                    qty => $sharesToSell,
                     ticket => $tickerDomesticLeastReturn,
                     price => $domesticLeastReturnPrice
                 ]);  

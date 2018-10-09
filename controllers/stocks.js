@@ -482,11 +482,11 @@ function rebalance() {
       for (var index = 0; index < stocksToSell.length; index++) {
         var stockToSell = stocksToSell[index];
 
-        if (stockToSell.qty < 0) {
+       // if (stockToSell.qty < 0) {
           _buySingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
-        } else {
+        //} else {
           _sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
-        }
+        //}
       }
 
     },
@@ -651,6 +651,7 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
     method: 'post',
     success: function (data) {
       window.App.Portfolio.loadPortfolioById();
+      App.Portfolio.investCashPortfolio(qty * pricePerStock)
     },
     data: {
       portfolio_id: porfolioId,
@@ -670,6 +671,8 @@ function _sellSingleStock(ticker, qty, pricePerStock, market) {
     method: 'post',
     success: function (data) {
       window.App.Portfolio.loadPortfolioById();
+      
+      App.Portfolio.addCashPortfolio(qty * pricePerStock, true, false, false); 
     },
     data: {
       portfolio_id: porfolioId,

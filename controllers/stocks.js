@@ -493,8 +493,8 @@ function rebalance() {
       function: 'rebalance',
       usStockLeastReturnTicker: getUsLRS(),
       usStockMostReturnTicker: getUsMRS(),
-      indiaStockLeastReturnTicker: getInLRS(),
-      indiaStockMostReturnTicker: getInMRS()
+      indiaStockLeastReturnTicker: patchTicker(getInLRS()),
+      indiaStockMostReturnTicker: patchTicker(getInMRS())
     }
   });
 }

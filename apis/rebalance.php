@@ -126,6 +126,13 @@
         global $portfolio_id, $domesticStockValue, $foreignStockValue, $cash, $totalPortfolioValue, 
         $tickerDomesticMostReturn, $tickerDomesticLeastReturn, $tickerForeignLeastReturn, $tickerForeignMostReturn,
         $domesticLeastReturnPrice, $domesticMostReturnPrice, $foreignLeastReturnPrice, $foreignMostReturnPrice; 
+        
+        $obj = (object) [
+            'buy' => [],
+            'sell' => []
+        ];
+        
+
         // if cash is greater than 10% of the total portfolio value, buy underweight asset (foreign/domestic)
         if ($cash > 0.1 * $totalPortfolioValue){
             $buyAmt = $cash - 0.1 * $totalPortfolioValue;
@@ -133,12 +140,29 @@
             if($domesticStockValue/($domesticStockValue + $foreignStockValue) > 0.7){
                 //buy the ticker from foreign stocks with the most return
                 $sharesToBuy = $buyAmt / $foreignMostReturnPrice;
-                buy ($portfolio_id, 'BSE/NSE', $tickerForeignMostReturn, $tickerForeignMostReturn, $sharesToBuy, $foreignMostReturnPrice);
+
+                array_push($obj->buy, (object) [
+                    portfolio_id => $portfolio_id,
+                    market => 'BSE/NSE',
+                    qty => $sharesToBuy,
+                    ticket => $tickerForeignMostReturn,
+                    price => $foreignMostReturnPrice
+                ]);  
+
+                //buy ($portfolio_id, 'BSE/NSE', $tickerForeignMostReturn, $tickerForeignMostReturn, $sharesToBuy, $foreignMostReturnPrice);
             //domestic is underweight, buy domestic
             } else {
                 //buy the ticker from domestic stocks with the most return
                 $sharesToBuy = $buyAmt / $domesticMostReturnPrice;
-                buy ($portfolio_id, 'Dow-30', $tickerDomesticMostReturn, $tickerDomesticMostReturn, $sharesToBuy, $domesticMostReturnPrice);
+    
+                array_push($obj->buy, (object) [
+                    portfolio_id => $portfolio_id,
+                    market => 'Dow-30',
+                    qty => $sharesToBuy,
+                    ticket => $tickerDomesticMostReturn,
+                    price => $domesticMostReturnPrice
+                ]);  
+                //buy ($portfolio_id, 'Dow-30', $tickerDomesticMostReturn, $tickerDomesticMostReturn, $sharesToBuy, $domesticMostReturnPrice);
             }
     
         } 
@@ -150,11 +174,27 @@
                 $foreignSellAmt = $domesticBuyAmt - $cash;
                 $sharesToSell = $foreignSellAmt / $foreignLeastReturnPrice;
                 //sell the stock from foreign stocks with the least return since purchase
-                sell ($portfolio_id, 'BSE/NSE', $tickerForeignLeastReturn, $tickerForeignLeastReturn, $sharesToSell, $foreignLeastReturnPrice);
+                array_push($obj->sell, (object) [
+                    portfolio_id => $portfolio_id,
+                    market => 'BSE/NSE',
+                    qty => $sharesToBuy,
+                    ticket => $tickerForeignLeastReturn,
+                    price => $foreignLeastReturnPrice
+                ]);  
+
+                //sell ($portfolio_id, 'BSE/NSE', $tickerForeignLeastReturn, $tickerForeignLeastReturn, $sharesToSell, $foreignLeastReturnPrice);
             }
             //buy domestic with the most return since purchase
             $sharesToBuy = $domesticBuyAmt / $domesticMostReturnPrice;
-            buy ($portfolio_id, 'Dow-30', $tickerDomesticMostReturn, $tickerDomesticMostReturn, $sharesToBuy, $domesticMostReturnPrice);
+
+            array_push($obj->buy, (object) [
+                    portfolio_id => $portfolio_id,
+                    market => 'Dow-30',
+                    qty => $sharesToBuy,
+                    ticket => $tickerDomesticMostReturn,
+                    price => $domesticMostReturnPrice
+            ]);  
+            //buy ($portfolio_id, 'Dow-30', $tickerDomesticMostReturn, $tickerDomesticMostReturn, $sharesToBuy, $domesticMostReturnPrice);
     
         }
         //domestic is overweight
@@ -163,12 +203,30 @@
             if ($foreignBuyAmt < $cash) {
                 $domesticSellAmt = $foreignBuyAmt - $cash;
                 $sharesToSell = $domesticSellAmt / $domesticLeastReturnPrice;
+
+                array_push($obj->sell, (object) [
+                    portfolio_id => $portfolio_id,
+                    market => 'Dow-30',
+                    qty => $sharesToBuy,
+                    ticket => $tickerDomesticLeastReturn,
+                    price => $domesticLeastReturnPrice
+                ]);  
+
                 //sell the stock from domestic stocks with the least return since purchase
-                sell ($portfolio_id, 'Dow-30', $tickerDomesticLeastReturn, $tickerDomesticLeastReturn, $sharesToSell, $domesticLeastReturnPrice);
+               // sell ($portfolio_id, 'Dow-30', $tickerDomesticLeastReturn, $tickerDomesticLeastReturn, $sharesToSell, $domesticLeastReturnPrice);
             }
             //buy foreign with the most return since purchase
             $sharesToBuy = $foreignBuyAmt / $foreignMostReturnPrice;
-            buy ($portfolio_id, 'BSE/NSE', $tickerDomesticMostReturn, $tickerForeignMostReturn, $sharesToBuy, $foreignMostReturnPrice);
+
+            array_push($obj->buy, (object) [
+                    portfolio_id => $portfolio_id,
+                    market => 'BSE/NSE',
+                    qty => $sharesToBuy,
+                    ticket => $tickerForeignMostReturn,
+                    price => $foreignMostReturnPrice
+            ]); 
+
+           // buy ($portfolio_id, 'BSE/NSE', $tickerForeignMostReturn, $tickerForeignMostReturn, $sharesToBuy, $foreignMostReturnPrice);
         }
             
     }

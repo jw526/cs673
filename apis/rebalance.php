@@ -23,7 +23,7 @@
     //$_POST['foreignLeastReturnPrice'];
     
 
-    echo ($foreignMostReturnPrice);
+    //echo ($foreignMostReturnPrice);
     
 
 /*     try{
@@ -55,18 +55,18 @@
                     '$price',
                     'buy',
                     NOW());
-    ";
+        ";
 
-    $result = mysqli_query($dbc, $sql);
+        $result = mysqli_query($dbc, $sql);
 
-    // Convert To JSON and send back
-    $obj = (object) [
-        'success' => true
-    ];
-    echo json_encode($obj);
+        // Convert To JSON and send back
+        $obj = (object) [
+            'success' => true
+        ];
+        echo json_encode($obj);
 
-    /* Close Connection */
-    mysqli_close($dbc);
+        /* Close Connection */
+        mysqli_close($dbc);
     }
     ///////////////////////////////////////////////////////////////////////////////
     //////////////testing dummy buy     //////////////////////////////////////////
@@ -94,18 +94,18 @@
                     '$price',
                     'sell',
                     NOW());
-    ";
+        ";
 
-    $result = mysqli_query($dbc, $sql);
+        $result = mysqli_query($dbc, $sql);
 
-    // Convert To JSON and send back
-    $obj = (object) [
-        'success' => true
-    ];
-    echo json_encode($obj);
+        // Convert To JSON and send back
+        $obj = (object) [
+            'success' => true
+        ];
+        echo json_encode($obj);
 
-    /* Close Connection */
-    mysqli_close($dbc);
+        /* Close Connection */
+        mysqli_close($dbc);
     }
 
     function needRebalance() {
@@ -120,7 +120,7 @@
         return false;
     }
 
-    function rebalance(){
+    function rebalance (){
         global $portfolio_id, $domesticStockValue, $foreignStockValue, $cash, $totalPortfolioValue, 
         $tickerDomesticMostReturn, $tickerDomesticLeastReturn, $tickerForeignLeastReturn, $tickerForeignMostReturn,
         $domesticLeastReturnPrice, $domesticMostReturnPrice, $foreignLeastReturnPrice, $foreignMostReturnPrice; 

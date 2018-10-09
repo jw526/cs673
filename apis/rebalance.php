@@ -3,7 +3,7 @@
     global $dbc;
 
     $function = $_POST['function'];
-    $$portfolio_id = $_POST['$portfolio_id'];
+    $portfolio_id = $_POST['$portfolio_id'];
     //$user_id = $_POST['user_id'];
     $domesticStockValue = $_POST['domesticStockValue'];
     $foreignStockValue = $_POST['foreignStockValue']; 

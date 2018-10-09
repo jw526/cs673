@@ -470,6 +470,20 @@ function rebalance() {
       console.log(data);
       window.App.Portfolio.loadPortfolioById();
       alert('WE WILL EXECUTE: ' + JSON.stringify(data));
+
+      var stocksToBuy = data.buy;
+      var stocksToSell = data.sell;
+
+      for (var index = 0; index < stocksToBuy.length; index++) {
+        var stockToBuy = stocksToBuy[index];
+        _buySingleStock(stockToBuy.ticket, stockToBuy.qty, stockToBuy.price, stockToBuy.market)
+      }
+
+      for (var index = 0; index < stocksToSell.length; index++) {
+        var stockToSell = stocksToSell[index];
+        _sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
+      }
+
     },
     data: {
       portfolio_id: window.getCurrentPortfolioId(),
@@ -625,3 +639,40 @@ function isFirstTimeBuyer (ticker) {
   return firstTime;
 }
 
+function _buySingleStock(ticker, qty, pricePerStock, market) {
+  var porfolioId = window.getCurrentPortfolioId();
+
+  $.ajax(window.App.endpoints.buyStock, {
+    method: 'post',
+    success: function (data) {
+      window.App.Portfolio.loadPortfolioById();
+    },
+    data: {
+      portfolio_id: porfolioId,
+      stock_market: market,
+      ticker: ticker,
+      company_name: ticker,
+      quantity: qty,
+      price: pricePerStock
+    }
+  });
+}
+
+function _sellSingleStock(ticker, qty, pricePerStock, market) {
+  var porfolioId = window.getCurrentPortfolioId();
+
+  $.ajax(window.App.endpoints.sellStock, {
+    method: 'post',
+    success: function (data) {
+      window.App.Portfolio.loadPortfolioById();
+    },
+    data: {
+      portfolio_id: porfolioId,
+      stock_market: market,
+      ticker: ticker,
+      company_name: ticker,
+      quantity: qty,
+      price: pricePerStock
+    }
+  });
+}

@@ -229,6 +229,7 @@
            // buy ($portfolio_id, 'BSE/NSE', $tickerForeignMostReturn, $tickerForeignMostReturn, $sharesToBuy, $foreignMostReturnPrice);
         }
             
+        echo json_encode($obj);
     }
 
     if ($function == 'needRebalance') {

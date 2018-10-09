@@ -61,7 +61,7 @@
 
         // Convert To JSON and send back
         $obj = (object) [
-            'success' => true
+            'buy' => $sql
         ];
         echo json_encode($obj);
 
@@ -100,7 +100,7 @@
 
         // Convert To JSON and send back
         $obj = (object) [
-            'success' => true
+            'sell' => $sql
         ];
         echo json_encode($obj);
 

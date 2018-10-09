@@ -481,7 +481,12 @@ function rebalance() {
 
       for (var index = 0; index < stocksToSell.length; index++) {
         var stockToSell = stocksToSell[index];
-        _sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
+
+        if (stockToSell.qty < 0) {
+          _buySingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
+        } else {
+          _sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
+        }
       }
 
     },

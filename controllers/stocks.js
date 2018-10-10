@@ -690,9 +690,18 @@ function _sellSingleStock(ticker, qty, pricePerStock, market) {
 function handleOrderUploadData(arrayOfActions) {
   for (var index = 0; index < arrayOfActions.length; index++) {
     var action = arrayOfActions[index];
-    
+    handleTriggerActions(action);
+  }
+
+
+  function handleTriggerActions (action) {
     if (action.action == 'buy') {
       _getStockPrice(action.ticker, function (price) {
+
+        if ((action.qty * price) > window.App.datalayer.currentPortfolioCash) {
+          alert(action.ticker + " requires more money to guy " + action.qty + " Of");
+          return;
+        }
         _buySingleStock(action.ticker, action.qty, price, 'N/A');
       });
     } else {
@@ -700,6 +709,5 @@ function handleOrderUploadData(arrayOfActions) {
         _sellSingleStock(action.ticker, action.qty, price, 'N/A');
       });
     }
-
   }
 }

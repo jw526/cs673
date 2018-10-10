@@ -3,6 +3,14 @@
   <?php include('./partials/header.php'); ?>
 <body>
 
+<style>
+  #upload-form{
+        width: 335px;
+    display: inline-block;
+    border: 1px solid black;
+  }
+</style>
+
   <h1 class="center">My Stocks</h1>
     <div class="center">
     Cash: <span id="cash-percent">...</span>% |
@@ -12,6 +20,15 @@
   <div id="stock-amount-owned-error" style="color:red" class="center"></div>
   <div id="auto-balance-error" style="color:red" class="center"></div>
   <div class="center">Cash Balance: $<span id="cash-account-balance">0</span></div>
+
+  <div class="center">
+    <form id="upload-form" action="" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <input type="file" name="orderfile" class="form-control-file" id="exampleFormControlFile1">
+        <button type="submit"> upload</button>
+      </div>
+    </form>
+  </div>
 
   <!-- Action Bar -->
   <div class="header-button-container">
@@ -127,6 +144,44 @@
   <?php include('./partials/footer.php'); ?>
   <script>
     window.App.init.MyPortfolio();
+
+    $("#upload-form").on('submit', function (event) {
+      event.preventDefault();
+      var file = event.target.orderfile.value;
+
+      $.ajax('/apis/orderfile.php', {
+        method: 'post',
+                // Form data
+        data: new FormData($("#upload-form")[0]),
+
+        // Tell jQuery not to process data or worry about content-type
+        // You *must* include these options!
+        cache: false,
+        contentType: false,
+        processData: false,
+
+        success: function (data) {
+          console.log(data);
+
+          var response = [];
+
+          for (var index = 0; index < data.actions.length; index++) {
+            var action = data.actions[index];
+            action.qty = parseFloat(action.qty);
+            response.push(action)
+          }
+
+          //console.log(response);
+          window.handleOrderUploadData(response);
+        },
+        // data: {
+        //   portfolio_id: file
+        // }
+      });
+    })
+
+
+
   </script>
 </body>
 </html>

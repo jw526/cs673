@@ -1,17 +1,5 @@
-<html>
-   <body>
-      
-      <form action="" method="POST" enctype="multipart/form-data">
-         <input type="file" name="orderfile" />
-         <input type="submit" name="submit" value="upload" />
-      </form>
-      
-   </body>
-</html>
-
-
 <?php
-
+header('Content-Type: application/json');
 $getOrder = $_POST['getOrder'];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -34,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
       
       if(empty($errors)){
          //move_uploaded_file($file_tmp,"UPLOADS/".$file_name);
-         echo "Upload Success!";
+         //echo "Upload Success!";
       }else{
          print_r($errors);
       }
@@ -44,28 +32,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 $orderFile = fopen($file_tmp, "r") or die("Unable to open file!");
 // Output one line until end-of-file
 
+    $portfoliosObj = (object) [
+        'actions' => [ ]
+    ];
+
+
 while (($line = fgets($orderFile)) !== false) {
     $arr = explode( ",", $line);
     $action = $arr[0];
     $ticker = $arr[1];
     $qty = $arr[2];
-
-    $order = array(
-        "action" => $action,
-        "ticker" => $ticker,
-        "qty" => $qty
-    );
     
-    print_r($order);
-    $orders = array();  
+    array_push($portfoliosObj->actions, (object) [
+        action => $action,
+        ticker => $ticker,
+        qty => $qty
+    ]);
+
+   // print_r($order);
+    //$orders = array();  
            
-    array_push($orders, $order);  //only printout orders[0] ??
+   // array_push($orders, $order);  //only printout orders[0] ??
 }
 
 
-fclose($myfile);
+echo json_encode($portfoliosObj);
 
-if ($getOrder == 'getOrder') {
-    echo json_encode($orders);
-}
+//fclose($myfile);
+
+// if ($getOrder == 'getOrder') {
+//     echo json_encode($orders);
+// }
 ?>

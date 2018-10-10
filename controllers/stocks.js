@@ -647,6 +647,7 @@ function isFirstTimeBuyer (ticker) {
 function _buySingleStock(ticker, qty, pricePerStock, market) {
   var porfolioId = window.getCurrentPortfolioId();
 
+
   $.ajax(window.App.endpoints.buyStock, {
     method: 'post',
     success: function (data) {
@@ -683,4 +684,22 @@ function _sellSingleStock(ticker, qty, pricePerStock, market) {
       price: pricePerStock
     }
   });
+}
+
+
+function handleOrderUploadData(arrayOfActions) {
+  for (var index = 0; index < arrayOfActions.length; index++) {
+    var action = arrayOfActions[index];
+    
+    if (action.action == 'buy') {
+      _getStockPrice(action.ticker, function (price) {
+        _buySingleStock(action.ticker, action.qty, price, 'N/A');
+      });
+    } else {
+      _getStockPrice(action.ticker, function (price) {
+        _sellSingleStock(action.ticker, action.qty, price, 'N/A');
+      });
+    }
+
+  }
 }

@@ -149,7 +149,7 @@
       event.preventDefault();
       var file = event.target.orderfile.value;
 
-      $.ajax('/apis/orderfile.php', {
+      $.ajax('/~mc332/cs673/apis/orderfile.php', {
         method: 'post',
                 // Form data
         data: new FormData($("#upload-form")[0]),

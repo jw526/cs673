@@ -4,110 +4,42 @@
 
     $function = $_POST['function'];
     $portfolio_id = $_POST['portfolio_id'];
-    //$user_id = $_POST['user_id'];
+    $us_stocks = $_POST['us_stocks'];
+    $india_stocks = $_POST['india_stocks'];
+
     $domesticStockValue = $_POST['domesticStockValue'];
     $foreignStockValue = $_POST['foreignStockValue']; 
     $cash = $_POST['cash']; 
     $totalPortfolioValue = $domesticStockValue + $foreignStockValue + $cash;
     $tickerDomesticMostReturn = $_POST['usStockMostReturnTicker'];
     $tickerDomesticLeastReturn = $_POST['usStockLeastReturnTicker'];
-    $tickerForeignMostReturn = $_POST['indiaStockMostReturnTicker']; //'GAIL.NS';
+    $tickerForeignMostReturn = $_POST['indiaStockMostReturnTicker'];
     $tickerForeignLeastReturn = $_POST['indiaStockLeastReturnTicker'];
     $domesticMostReturnPrice = (double) file_get_contents('https://web.njit.edu/~mc332/webapps8/hello2?ticket='.$tickerDomesticMostReturn); 
-  //$_POST['domesticMostReturnPrice'];
     $domesticLeastReturnPrice = (double) file_get_contents('https://web.njit.edu/~mc332/webapps8/hello2?ticket='.$tickerDomesticLeastReturn);
-    //$_POST['domesticLeastReturnPrice'];
     $foreignMostReturnPrice = 0.014 * (double) file_get_contents('https://web.njit.edu/~mc332/webapps8/hello2?ticket='.$tickerForeignMostReturn);
-    //$_POST['foreignMostReturnPrice'];
     $foreignLeastReturnPrice = 0.014 * (double) file_get_contents('https://web.njit.edu/~mc332/webapps8/hello2?ticket='.$tickerForeignLeastReturn);
-    //$_POST['foreignLeastReturnPrice'];
-    
-
-    //echo ($foreignMostReturnPrice);
-    
-
-/*     try{
-        $inr = file_get_contents ('https://www.google.com/search?q=INR+conversoin+rate');
-        $inr1 = explode('\"knowledge-currency__tgt-amount\"', $inr)[1];
-        $conversionRate = (double) explode(">", $inr1)[1];
-    } catch (Execption $e) {
-        $conversionRate = 0.014;
-    }
-    echo( "\n" .$conversionRate); */
+        
 
     function buy($portfolio_id, $stock_market, $ticker, $company_name, $quantity, $price){
-        // $sql = "
-        // INSERT INTO transactions (portfolio_id,
-        //                           user_id, 
-        //                           stock_market, 
-        //                           ticker, 
-        //                           company_name,
-        //                           quantity,
-        //                           price,
-        //                           transaction_action,
-        //                           transaction_timestamp)
-        //     VALUES ('$portfolio_id',
-        //             '$_SESSION[user_id]',
-        //             '$stock_market',
-        //             '$ticker',
-        //             '$company_name',
-        //             '$quantity',
-        //             '$price',
-        //             'buy',
-        //             NOW());
-        // ";
-
-        // $result = mysqli_query($dbc, $sql);
-
+        
         // Convert To JSON and send back
         $obj = (object) [
             'buy' => $ticker,
             'quantity' => $quantity
         ];
         echo json_encode($obj);
-
-        // /* Close Connection */
-        // mysqli_close($dbc);
     }
-    ///////////////////////////////////////////////////////////////////////////////
-    //////////////testing dummy buy     //////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
 
-    //buy (92, 'Dow-30', 'AAPL', 'Apple', 0.11, 134.98);
 
     function sell ($portfolio_id, $stock_market, $ticker, $company_name, $quantity, $price){
-        // $sql = "
-        // INSERT INTO transactions (portfolio_id,
-        //                           user_id, 
-        //                           stock_market, 
-        //                           ticker, 
-        //                           company_name,
-        //                           quantity,
-        //                           price,
-        //                           transaction_action,
-        //                           transaction_timestamp)
-        //     VALUES ('$portfolio_id',
-        //             '$_SESSION[user_id]',
-        //             '$stock_market',
-        //             '$ticker',
-        //             '$company_name',
-        //             '$quantity',
-        //             '$price',
-        //             'sell',
-        //             NOW());
-        // ";
-
-        // $result = mysqli_query($dbc, $sql);
-
+        
         // Convert To JSON and send back
         $obj = (object) [
             'sell' => $ticker,
             'quantity' => $quantity
         ];
         echo json_encode($obj);
-
-        // /* Close Connection */
-        // mysqli_close($dbc);
     }
 
     function needRebalance() {
@@ -123,7 +55,7 @@
     }
 
     function rebalance (){
-        global $portfolio_id, $domesticStockValue, $foreignStockValue, $cash, $totalPortfolioValue, 
+        global $portfolio_id, $domesticStockValue, $foreignStockValue, $cash, $totalPortfolioValue, $us_stocks, $india_stocks,
         $tickerDomesticMostReturn, $tickerDomesticLeastReturn, $tickerForeignLeastReturn, $tickerForeignMostReturn,
         $domesticLeastReturnPrice, $domesticMostReturnPrice, $foreignLeastReturnPrice, $foreignMostReturnPrice; 
         
@@ -131,6 +63,9 @@
             'buy' => [],
             'sell' => []
         ];
+
+        $us = json_decode($us_stocks);
+        $is = json_decode($india_stocks);   
         
 
         // if cash is greater than 10% of the total portfolio value, buy underweight asset (foreign/domestic)
@@ -148,8 +83,6 @@
                     ticket => $tickerForeignMostReturn,
                     price => $foreignMostReturnPrice
                 ]);  
-
-                //buy ($portfolio_id, 'BSE/NSE', $tickerForeignMostReturn, $tickerForeignMostReturn, $sharesToBuy, $foreignMostReturnPrice);
             //domestic is underweight, buy domestic
             } else {
                 //buy the ticker from domestic stocks with the most return
@@ -164,25 +97,42 @@
                 ]);  
                 //buy ($portfolio_id, 'Dow-30', $tickerDomesticMostReturn, $tickerDomesticMostReturn, $sharesToBuy, $domesticMostReturnPrice);
             }
+            $cash = 0.1 * $totalPortfolioValue;
     
         } 
         //domestic is underweight
         if($domesticStockValue/($domesticStockValue + $foreignStockValue) < 0.7){
-            $domesticBuyAmt = 0.7 * ($domesticStockValue + $foreignStockValue) - $domesticStockValue;
+            $domesticBuyAmt = 0.7 * $totalPortfolioValue - $domesticStockValue;
             //not enough cash to cover the buy amount
-            if($domesticBuyAmt < $cash){
+            if($domesticBuyAmt > $cash){
                 $foreignSellAmt = $domesticBuyAmt - $cash;
-                $sharesToSell = $foreignSellAmt / $foreignLeastReturnPrice;
-                //sell the stock from foreign stocks with the least return since purchase
-                array_push($obj->sell, (object) [
-                    portfolio_id => $portfolio_id,
-                    market => 'BSE/NSE',
-                    qty => $sharesToSell,
-                    ticket => $tickerForeignLeastReturn,
-                    price => $foreignLeastReturnPrice
-                ]);  
-
-                //sell ($portfolio_id, 'BSE/NSE', $tickerForeignLeastReturn, $tickerForeignLeastReturn, $sharesToSell, $foreignLeastReturnPrice);
+                
+                //sell foreign stocks
+                foreach($is as $key => $value){
+                    if($foreignSellAmt >= $value->price * $value->qty){
+                        $foreignSellAmt = $foreignSellAmt - $value->price * $value->qty;
+                        array_push($obj->sell, (object) [
+                            portfolio_id => $portfolio_id,
+                            market => 'BSE/NSE',
+                            qty => $value->qty,
+                            ticket => $key,
+                            price => $value->price
+                        ]);  
+                        continue;
+                    }
+                    if($foreignSellAmt < $value->price * $value->qty) {
+                        $qty = $foreignSellAmt / $value->price;
+                        $foreignSellAmt = 0;
+                        array_push($obj->sell, (object) [
+                            portfolio_id => $portfolio_id,
+                            market => 'BSE/NSE',
+                            qty => $qty,
+                            ticket => $key,
+                            price => $value->price
+                        ]);
+                        break;  
+                    }
+                } 
             }
             //buy domestic with the most return since purchase
             $sharesToBuy = $domesticBuyAmt / $domesticMostReturnPrice;
@@ -193,27 +143,41 @@
                     qty => $sharesToBuy,
                     ticket => $tickerDomesticMostReturn,
                     price => $domesticMostReturnPrice
-            ]);  
-            //buy ($portfolio_id, 'Dow-30', $tickerDomesticMostReturn, $tickerDomesticMostReturn, $sharesToBuy, $domesticMostReturnPrice);
-    
+            ]);      
         }
         //domestic is overweight
         else{
-            $foreignBuyAmt = $domesticStockValue/0.7 - $domesticStockValue - $foreignStockValue;
-            if ($foreignBuyAmt < $cash) {
+           // $foreignBuyAmt = (0.3 * $domesticStockValue - 0.7 * $foreignStockValue) / 0.7;
+           $foreignBuyAmt = 0.3 * $totalPortfolioValue - $foreignStockValue;
+            if ($foreignBuyAmt > $cash) {
                 $domesticSellAmt = $foreignBuyAmt - $cash;
-                $sharesToSell = $domesticSellAmt / $domesticLeastReturnPrice;
-
-                array_push($obj->sell, (object) [
-                    portfolio_id => $portfolio_id,
-                    market => 'Dow-30',
-                    qty => $sharesToSell,
-                    ticket => $tickerDomesticLeastReturn,
-                    price => $domesticLeastReturnPrice
-                ]);  
-
-                //sell the stock from domestic stocks with the least return since purchase
-               // sell ($portfolio_id, 'Dow-30', $tickerDomesticLeastReturn, $tickerDomesticLeastReturn, $sharesToSell, $domesticLeastReturnPrice);
+               // $sharesToSell = $domesticSellAmt / $domesticLeastReturnPrice;
+                //sell domestic stocks
+                foreach($us as $key => $value){
+                    if($domesticSellAmt >= $value->price * $value->qty){
+                        $domesticSellAmt = $domesticSellAmt - $value->price * $value->qty;
+                        array_push($obj->sell, (object) [
+                            portfolio_id => $portfolio_id,
+                            market => 'Dow-30',
+                            qty => $value->qty,
+                            ticket => $key,
+                            price => $value->price
+                        ]); 
+                        continue;
+                    }
+                    if($domesticSellAmt < $value->price * $value->qty) {
+                        $qty = $domesticSellAmt / $value->price;
+                        $domesticSellAmt = 0;
+                        array_push($obj->sell, (object) [
+                            portfolio_id => $portfolio_id,
+                            market => 'Dow-30',
+                            qty => $qty,
+                            ticket => $key,
+                            price => $value->price
+                        ]);
+                        break;  
+                    }
+                } 
             }
             //buy foreign with the most return since purchase
             $sharesToBuy = $foreignBuyAmt / $foreignMostReturnPrice;
@@ -226,7 +190,6 @@
                     price => $foreignMostReturnPrice
             ]); 
 
-           // buy ($portfolio_id, 'BSE/NSE', $tickerForeignMostReturn, $tickerForeignMostReturn, $sharesToBuy, $foreignMostReturnPrice);
         }
             
         echo json_encode($obj);
@@ -241,5 +204,7 @@
     if ($function == 'rebalance') {
         echo rebalance();
     }
+
+    rebalance();
 
 ?>

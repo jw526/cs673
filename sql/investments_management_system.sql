@@ -219,11 +219,97 @@ ORDER BY transaction_date ASC;
 
 
 
+/*
+    UPDATES
+*/
 
 
 
+/* Table will store all and each stock transaction */
+CREATE TABLE transactions (
+    transaction_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,    
+    portfolio_id INT NOT NULL,
+    user_id INT NOT NULL,
+    
+    /* NEW COLUMN */
+    /* Insert transaction_id from which transaction stock was sold */
+    sold_from_transaction INT NOT NULL DEFAULT 0,
+    
+    /* Stock market name should be inserted == Dow-30 or BSE/NSE */
+    stock_market CHAR (10) NOT NULL,
+    ticker VARCHAR (10) NOT NULL,
+    company_name VARCHAR (30) NOT NULL,
+    
+    /* If stock is purchased == positive value of number of shares purchased should be inserted == and == negetive value should be inserted of the number of shares sold == */
+    quantity DECIMAL (15,4) NOT NULL, 
+    
+    /* NEW COLUMN */
+    /* Number of shares sold, insert number of shares sold, positive number, only, PLEASE NO NEGETIVE FIGURES */
+    sold DECIMAL (15,4) NOT NULL DEFAULT 0, 
+    
+    
+    /* price per one share */
+    price DECIMAL (15,2) NOT NULL, 
+    
+    /* Value inserted here should by == buy == or == sell == */
+    transaction_action VARCHAR (10) NOT NULL, 
+    transaction_timestamp DATETIME NOT NULL DEFAULT NOW()    
+) DEFAULT CHARACTER SET utf8;
 
 
+/* === Inserting stock transactions === */
+INSERT INTO transactions (portfolio_id,
+                          user_id, 
+                          sold_from_transaction,
+                          stock_market, 
+                          ticker, 
+                          company_name,
+                          quantity,
+                          sold
+                          price,
+                          transaction_action,
+                          transaction_timestamp)
+     VALUES ('$portfolio_id',
+             '$_SESSION[user_id]',
+             '$sold_from_transaction',
+             '$stock_market',
+             '$ticker',
+             '$company_name',
+             '$quantity',
+             '$sold'
+             '$price',
+             '$transaction_action',
+             NOW());
+             
+
+
+/* === Selecting infor from transaction table and portfolio table and === */
+/* === displaying how muct stock remains based on transactions === */
+SELECT portfolio.portfolio_name AS portfolio_name,
+       DATE_FORMAT(portfolio.created_timestamp, "%c-%d-%Y %H:%i:%S") AS portfolio_created,
+       transactions.transaction_id AS id,
+       transactions.quantity AS total_stock,
+       transactions.stock_market AS stock_market,
+       transactions.ticker AS ticker,
+       transactions.company_name AS company_name,
+       transactions.price AS price,
+       (SELECT total_stock * price) AS total_cost,
+       transactions.transaction_action AS action,
+       DATE_FORMAT(transactions.transaction_timestamp, "%c-%d-%Y %H:%i:%S") AS transaction_date,
+       (SELECT 
+           SUM(sold) AS sold
+          FROM transactions
+         WHERE id = sold_from_transaction) AS total_sold,
+        (SELECT total_stock - total_sold) AS remains
+  FROM portfolio
+  JOIN transactions 
+    ON portfolio.portfolio_id = transactions.portfolio_id 
+   AND portfolio.user_id = transactions.user_id
+ WHERE portfolio.user_id = 1
+   AND portfolio.open_close = 1
+   AND transactions.transaction_action != 'sell'
+GROUP BY transactions.transaction_id
+ORDER BY transaction_date ASC;
 
 
 

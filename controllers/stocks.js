@@ -85,6 +85,12 @@ window.App = window.App || {};
       return alert('You only have ' + myStock.qty)
     }
 
+    var stockLeftForTransaction = $('#tran-sell-'+ parseInt(transToSell)).data('left');
+    if (stockLeftForTransaction < amountToSell) {
+      console.log('You only have ' + stockLeftForTransaction)
+      return alert('You only have ' + stockLeftForTransaction)
+    }
+
     //  if (isIndianStock(myStock.id)) {
     //     currentPrice = currentPrice * indiaConverionRate;
     //  }
@@ -748,7 +754,7 @@ function renderStockTransToSellFrom (ticker) {
     //console.log(tran, qtyLeft, tran.qty, getTotalQtySoldForTransaction(tran));
     
     if (qtyLeft > 0) {
-      var option = '<option value="' + tran.transaction_id+ '">'+ qtyLeft.toFixed(4) + " left at $" + tran.price +'</option>';
+      var option = '<option data-left="'+ qtyLeft +'" id="tran-sell-' + parseInt(tran.transaction_id) +'" value="' + tran.transaction_id+ '">'+ qtyLeft.toFixed(4) + " left at $" + tran.price +'</option>';
       $("#sell-from-trans").append(option);
     }
 
@@ -765,10 +771,10 @@ function getTotalQtySoldForTransaction (transaction) {
         patchTicker(tran.id) == patchTicker(transaction.id)
         && tran.action == 'sell'
         && tran.sold_from_transaction == transaction.transaction_id) {
-          qty = qty + tran.qty;
+          qty = qty + parseFloat(tran.qty);
     }
   }
 
-  return parseFloat(qty);
+  return parseFloat(parseFloat(qty).toFixed(4));
 }
 

@@ -62,6 +62,14 @@ window.App = window.App || {};
     var amountToSell = $('#amount-of-stock-to-sell').val();
     var transToSell = $('#sell-from-trans').val();
 
+    if (transToSell == 'Pick Stock Transaction') {
+      return alert('Select Transaction!');
+    }
+
+    if (!(parseFloat(amountToSell) > 0)) {
+     return alert('Enter Amount To Sell');
+    }
+
     var myStock = {};
     var currentPrice = formatPrice(window.App.datalayer.currentStockPrices[selectedStockId]);
     

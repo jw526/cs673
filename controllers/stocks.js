@@ -60,6 +60,7 @@ window.App = window.App || {};
     var stocksInPortfolio = window.App.datalayer.currentStocksForCurrentView;
     var selectedStockId = window.App.datalayer.selectedStockId
     var amountToSell = $('#amount-of-stock-to-sell').val();
+    var transToSell = $('#sell-from-trans').val();
 
     var myStock = {};
     var currentPrice = formatPrice(window.App.datalayer.currentStockPrices[selectedStockId]);
@@ -100,7 +101,8 @@ window.App = window.App || {};
         ticker: myStock.id,
         company_name: myStock.company_name,
         quantity: amountToSell,
-        price: currentPrice
+        price: currentPrice,
+        transToSell: transToSell
       }
     });
   }
@@ -110,7 +112,7 @@ window.App = window.App || {};
 
     window.App.datalayer.selectedStockId = selectedStockId;
 
-    
+    renderStockTransToSellFrom(selectedStockId);
     $('#stock-name-to-sell').html("How Much " + selectedStockId + " to sell?");
     $('#sell-stock-modal').modal('toggle');
   }
@@ -711,3 +713,54 @@ function handleOrderUploadData(arrayOfActions) {
     }
   }
 }
+
+function getTransactionsFor(ticker) {
+  var trans = window.App.datalayer.stockTransactions;
+  var selection = [];
+
+  for (var index = 0; index < trans.length; index++) {
+    var tran = trans[index];
+    if (patchTicker(tran.id) == patchTicker(ticker) && tran.action == 'buy') {
+      selection.push(tran);
+    }
+  }
+
+  return selection;
+}
+
+function renderStockTransToSellFrom (ticker) {
+  var trans = getTransactionsFor(ticker);
+
+  $("#sell-from-trans").html('');
+  $("#sell-from-trans").append('<option selected>Pick Stock Transaction</option>');
+
+  for (var index = 0; index < trans.length; index++) {
+    var tran = trans[index];
+    var qtyLeft = parseFloat(tran.qty) - getTotalQtySoldForTransaction(tran);
+    //console.log(tran, qtyLeft, tran.qty, getTotalQtySoldForTransaction(tran));
+    
+    if (qtyLeft > 0) {
+      var option = '<option value="' + tran.transaction_id+ '">'+ qtyLeft.toFixed(4) + " left at $" + tran.price +'</option>';
+      $("#sell-from-trans").append(option);
+    }
+
+  }
+}
+
+function getTotalQtySoldForTransaction (transaction) {
+  var qty = 0;
+  var trans = window.App.datalayer.stockTransactions;
+
+  for (var index = 0; index < trans.length; index++) {
+    var tran = trans[index];
+    if (
+        patchTicker(tran.id) == patchTicker(transaction.id)
+        && tran.action == 'sell'
+        && tran.sold_from_transaction == transaction.transaction_id) {
+          qty = qty + tran.qty;
+    }
+  }
+
+  return parseFloat(qty);
+}
+

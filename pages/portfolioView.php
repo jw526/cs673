@@ -124,11 +124,17 @@
           </button>
         </div>
         <div class="modal-body">
+          <select class="custom-select" id="sell-from-trans" name="sell-from-trans">
+            <option selected>Pick Stock Transaction</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select> 
+
+          <br />
+          <br />
           <div class="input-group input-group-sm mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="stock-name-to-sell"></span>
-            </div>
-            <input id="amount-of-stock-to-sell" type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+            <input placeholder="how many are you selling?" id="amount-of-stock-to-sell" type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
           </div>
         </div>
         <div class="modal-footer">

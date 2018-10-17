@@ -8,6 +8,7 @@
     $company_name = $_POST['company_name'];
     $quantity = $_POST['quantity'];
     $price = $_POST['price'];
+    $transToSell = $_POST['transToSell'];
 
     $sql = "
         INSERT INTO transactions (portfolio_id,
@@ -18,7 +19,8 @@
                                   quantity,
                                   price,
                                   transaction_action,
-                                  transaction_timestamp)
+                                  transaction_timestamp,
+                                  sold_from_transaction)
             VALUES ('$portfolio_id',
                     '$_SESSION[user_id]',
                     '$stock_market',
@@ -27,7 +29,8 @@
                     '$quantity',
                     '$price',
                     'sell',
-                    NOW());
+                    NOW(),
+                    $transToSell);
     ";
 
     $result = mysqli_query($dbc, $sql);

@@ -16,6 +16,8 @@
             transactions.stock_market AS stock_market,
             transactions.company_name AS company_name,
             transactions.price AS price,
+            transactions.transaction_id AS transaction_id,
+            transactions.sold_from_transaction AS sold_from_transaction,
             transactions.transaction_action AS action,
             DATE_FORMAT(transactions.transaction_timestamp, '%c-%d-%Y %H:%i:%S') AS transaction_date
         FROM portfolio
@@ -42,7 +44,9 @@
             action => $row['action'],
             company_name => $row['company_name'],
             stock_market => $row['stock_market'],
-            transaction_date => $row['transaction_date']
+            transaction_date => $row['transaction_date'],
+            transaction_id => $row['transaction_id'],
+            sold_from_transaction => $row['sold_from_transaction']
           ]);          
     } 
 

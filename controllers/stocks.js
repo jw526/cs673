@@ -499,7 +499,7 @@ function rebalance() {
         var stockToSell = stocksToSell[index];
 
        // if (stockToSell.qty < 0) {
-          _buySingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
+          //_buySingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
         //} else {
           _sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
         //}
@@ -515,7 +515,9 @@ function rebalance() {
       usStockLeastReturnTicker: getUsLRS(),
       usStockMostReturnTicker: getUsMRS(),
       indiaStockLeastReturnTicker: patchTicker(getInLRS()),
-      indiaStockMostReturnTicker: patchTicker(getInMRS())
+      indiaStockMostReturnTicker: patchTicker(getInMRS()),
+      us_stocks: JSON.stringify(getUserUsStocksForCurrentPortfolio()),
+      india_stocks: JSON.stringify(getUserInidaStocksForCurrentPortfolio())
     }
   });
 }
@@ -776,5 +778,39 @@ function getTotalQtySoldForTransaction (transaction) {
   }
 
   return parseFloat(parseFloat(qty).toFixed(4));
+}
+
+function getUserInidaStocksForCurrentPortfolio() {
+  var currentStocks = window.App.datalayer.currentStocksForCurrentView;
+  var stocks = {};
+
+  for (let index = 0; index < currentStocks.length; index++) {
+    const stock = currentStocks[index];
+    if (stock.stock_market == "BSE/NSE") {
+      stocks[patchTicker(stock.id)]= {
+        price: window.App.datalayer.currentStockPrices[stock.id],
+        qty: stock.qty
+      }
+    }
+  }
+
+  return stocks;
+}
+
+function getUserUsStocksForCurrentPortfolio() {
+  var currentStocks = window.App.datalayer.currentStocksForCurrentView;
+  var stocks = {};
+
+  for (let index = 0; index < currentStocks.length; index++) {
+    const stock = currentStocks[index];
+    if (stock.stock_market != "BSE/NSE") {
+      stocks[patchTicker(stock.id)]= {
+        price: window.App.datalayer.currentStockPrices[stock.id],
+        qty: stock.qty
+      }
+    }
+  }
+
+  return stocks;
 }
 

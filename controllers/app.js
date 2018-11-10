@@ -46,7 +46,7 @@ window.App.endpoints = {
   getPortfolioById: prefix + '/apis/getPortfolioById.php',
   getUserInfo: prefix + '/apis/getUserInfo.php',
   downloadPortfolio: prefix + "/apis/report.php",
-  getStockInfo: 'https://web.njit.edu/~mc332/webapps8/hello2'
+  getStockInfo: window.App.isLocalHost ? "/apis/getStockInfo.php": 'https://web.njit.edu/~mc332/webapps8/hello2'
 }
 
 //All Pages in out app

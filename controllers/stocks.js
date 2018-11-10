@@ -750,7 +750,7 @@ function renderStockTransToSellFrom (ticker) {
 
   for (var index = 0; index < trans.length; index++) {
     var tran = trans[index];
-    var qtyLeft = parseFloat(tran.qty) - getTotalQtySoldForTransaction(tran);
+    var qtyLeft = parseFloat(parseFloat(tran.qty).toFixed(4)) - getTotalQtySoldForTransaction(tran);
     //console.log(tran, qtyLeft, tran.qty, getTotalQtySoldForTransaction(tran));
     
     if (qtyLeft > 0) {

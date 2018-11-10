@@ -720,7 +720,7 @@ function handleOrderUploadData(arrayOfActions) {
           alert(action.ticker + " requires more money to guy " + action.qty + " Of");
           return;
         }
-        _buySingleStock(action.ticker, action.qty, price, 'N/A');
+        _buySingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
       });
     } else {
       _getStockPrice(action.ticker, function (price) {
@@ -813,4 +813,3 @@ function getUserUsStocksForCurrentPortfolio() {
 
   return stocks;
 }
-

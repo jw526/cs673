@@ -202,9 +202,9 @@
         echo json_encode($obj);
     }
     if ($function == 'rebalance') {
-        echo rebalance();
+        rebalance();
     }
 
-    rebalance();
+    // rebalance();
 
 ?>

@@ -675,11 +675,10 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
       window.App.Portfolio.loadPortfolioById();
       App.Portfolio.investCashPortfolio(qty * pricePerStock);
 
-      _sellSingleStock(ticker, qty, pricePerStock, market);
       setTimeout(function() {
         // we accidently bought to much
         if(window.App.datalayer.currentPortfolioCash < 0) {
-          alert();
+          _sellSingleStock(ticker, qty, pricePerStock, market);
           return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
         }
       },500)
@@ -696,12 +695,18 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
   });
 }
 
-function _sellSingleStock(ticker, qty, pricePerStock, market) {
+function _sellSingleStock(ticker, qty, pricePerStock, market, isRepeat) {
   var porfolioId = window.getCurrentPortfolioId();
   var userStockMap = getStocksInCurrentPorfolioMap()
 
   if(qty > userStockMap[ticker].qty) {
-    return alert('Failed To Sell! You are trying to sell ' + qty + ' of ' + ticker + ' but only have ' + userStockMap[ticker].qty);
+    if(isRepeat){
+      return alert('Failed To Sell! You are trying to sell ' + qty + ' of ' + ticker + ' but only have ' + userStockMap[ticker].qty);
+    } else {
+      setTimeout(function(){
+        _sellSingleStock(ticker, qty, pricePerStock, market, true);
+      },700);
+    }
   }
 
   $.ajax(window.App.endpoints.sellStock, {

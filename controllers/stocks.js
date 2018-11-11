@@ -688,6 +688,11 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
 
 function _sellSingleStock(ticker, qty, pricePerStock, market) {
   var porfolioId = window.getCurrentPortfolioId();
+  var userStockMap = getStocksInCurrentPorfolioMap()
+
+  if(qty > userStockMap[ticker].qty) {
+    return alert('Failed To Sell! You are trying to sell ' + qty + ' of ' + ticker + ' but only have ' + userStockMap[ticker].qty);
+  }
 
   $.ajax(window.App.endpoints.sellStock, {
     method: 'post',
@@ -816,4 +821,11 @@ function getUserUsStocksForCurrentPortfolio() {
   }
 
   return stocks;
+}
+
+function getStocksInCurrentPorfolioMap() {
+  return Object.assign(
+    getUserInidaStocksForCurrentPortfolio(),
+    getUserUsStocksForCurrentPortfolio()
+  )
 }

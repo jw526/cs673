@@ -702,7 +702,8 @@ function _sellSingleStock(ticker, qty, pricePerStock, market) {
       ticker: ticker,
       company_name: ticker,
       quantity: qty,
-      price: pricePerStock
+      price: pricePerStock,
+      transToSell: 99999// FixMe
     }
   });
 }
@@ -727,7 +728,7 @@ function handleOrderUploadData(arrayOfActions) {
       });
     } else {
       _getStockPrice(action.ticker, function (price) {
-        _sellSingleStock(action.ticker, action.qty, price, 'N/A');
+        _sellSingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
       });
     }
   }

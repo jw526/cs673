@@ -492,12 +492,12 @@ function rebalance() {
 
       for (var index = 0; index < stocksToSell.length; index++) {
         var stockToSell = stocksToSell[index];
-        _sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market);
+        __sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market);
       }
 
       for (var index = 0; index < stocksToBuy.length; index++) {
         var stockToBuy = stocksToBuy[index];
-        _buySingleStock(stockToBuy.ticket, stockToBuy.qty, stockToBuy.price, stockToBuy.market);
+        __buySingleStock(stockToBuy.ticket, stockToBuy.qty, stockToBuy.price, stockToBuy.market);
       }
 
     },
@@ -797,11 +797,11 @@ function handleOrderUploadData(arrayOfActions) {
           alert(action.ticker + " requires more money to buy " + action.qty + " Of.");
           return;
         }
-        _buySingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
+        __buySingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
       });
     } else {
       _getStockPrice(action.ticker, function (price) {
-        _sellSingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
+        __sellSingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
       });
     }
   }

@@ -671,6 +671,7 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
       App.Portfolio.investCashPortfolio(qty * pricePerStock);
 
       setTimeout(function() {
+        console.log('Post Buy Check');
         // we accidently bought to much
         if(window.App.datalayer.currentPortfolioCash < 0) {
           _sellSingleStock(ticker, qty, pricePerStock, market);

@@ -673,7 +673,17 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
     method: 'post',
     success: function (data) {
       window.App.Portfolio.loadPortfolioById();
-      App.Portfolio.investCashPortfolio(qty * pricePerStock)
+      App.Portfolio.investCashPortfolio(qty * pricePerStock);
+
+      _sellSingleStock(ticker, qty, pricePerStock, market);
+      setTimeout(function() {
+        // we accidently bought to much
+        if(window.App.datalayer.currentPortfolioCash < 0) {
+          alert();
+          return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+        }
+      },500)
+
     },
     data: {
       portfolio_id: porfolioId,

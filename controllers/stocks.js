@@ -490,19 +490,14 @@ function rebalance() {
       var stocksToBuy = data.buy;
       var stocksToSell = data.sell;
 
+      for (var index = 0; index < stocksToSell.length; index++) {
+        var stockToSell = stocksToSell[index];
+        _sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market);
+      }
+
       for (var index = 0; index < stocksToBuy.length; index++) {
         var stockToBuy = stocksToBuy[index];
         _buySingleStock(stockToBuy.ticket, stockToBuy.qty, stockToBuy.price, stockToBuy.market)
-      }
-
-      for (var index = 0; index < stocksToSell.length; index++) {
-        var stockToSell = stocksToSell[index];
-
-       // if (stockToSell.qty < 0) {
-          //_buySingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
-        //} else {
-          _sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
-        //}
       }
 
     },
@@ -679,7 +674,7 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
         // we accidently bought to much
         if(window.App.datalayer.currentPortfolioCash < 0) {
           _sellSingleStock(ticker, qty, pricePerStock, market);
-          return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+          return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
         }
       },500)
 
@@ -741,7 +736,7 @@ function handleOrderUploadData(arrayOfActions) {
       _getStockPrice(action.ticker, function (price) {
 
         if ((action.qty * price) > window.App.datalayer.currentPortfolioCash) {
-          alert(action.ticker + " requires more money to guy " + action.qty + " Of.");
+          alert(action.ticker + " requires more money to buy " + action.qty + " Of.");
           return;
         }
         _buySingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');

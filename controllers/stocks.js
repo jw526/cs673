@@ -657,40 +657,55 @@ function isFirstTimeBuyer (ticker) {
   return firstTime;
 }
 
+var isBuyLocked = false;
+
 function _buySingleStock(ticker, qty, pricePerStock, market) {
   var porfolioId = window.getCurrentPortfolioId();
 
+  if (isBuyLocked) {
+    return setTimeout(function() {
+      _buySingleStock(ticker, qty, pricePerStock, market);
+    }, 1000)
+  }
+
+  isBuyLocked = true;
+
   if((qty * pricePerStock) > window.App.datalayer.currentPortfolioCash) {
+    isBuyLocked = false;
     return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
   }
 
-  setTimeout(function(){
-    $.ajax(window.App.endpoints.buyStock, {
-      method: 'post',
-      success: function (data) {
-        window.App.Portfolio.loadPortfolioById();
-        App.Portfolio.investCashPortfolio(qty * pricePerStock);
-  
-        setTimeout(function() {
-          console.log('Post Buy Check');
-          // we accidently bought to much
-          if(window.App.datalayer.currentPortfolioCash < 0) {
-            _sellSingleStock(ticker, qty, pricePerStock, market);
-            return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
-          }
-        },500)
-  
-      },
-      data: {
-        portfolio_id: porfolioId,
-        stock_market: market,
-        ticker: ticker,
-        company_name: ticker,
-        quantity: qty,
-        price: pricePerStock
-      }
-    });
-  }, 1500);
+  $.ajax(window.App.endpoints.buyStock, {
+    method: 'post',
+    error: function() {
+      isBuyLocked = false;
+    },
+    success: function (data) {
+      window.App.Portfolio.loadPortfolioById();
+      App.Portfolio.investCashPortfolio(qty * pricePerStock);
+
+      setTimeout(function() {
+        console.log('Post Buy Check');
+        // we accidently bought to much
+        if(window.App.datalayer.currentPortfolioCash < 0) {
+          _sellSingleStock(ticker, qty, pricePerStock, market);
+          return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+        }
+      },1000)
+
+      setTimeout(function() {
+        isBuyLocked = false;
+      }, 500);
+    },
+    data: {
+      portfolio_id: porfolioId,
+      stock_market: market,
+      ticker: ticker,
+      company_name: ticker,
+      quantity: qty,
+      price: pricePerStock
+    }
+  });
 }
 
 function _sellSingleStock(ticker, qty, pricePerStock, market, isRepeat) {

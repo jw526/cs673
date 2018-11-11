@@ -497,7 +497,7 @@ function rebalance() {
 
       for (var index = 0; index < stocksToBuy.length; index++) {
         var stockToBuy = stocksToBuy[index];
-        _buySingleStock(stockToBuy.ticket, stockToBuy.qty, stockToBuy.price, stockToBuy.market)
+        _buySingleStock(stockToBuy.ticket, stockToBuy.qty, stockToBuy.price, stockToBuy.market);
       }
 
     },
@@ -664,31 +664,33 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
     return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
   }
 
-  $.ajax(window.App.endpoints.buyStock, {
-    method: 'post',
-    success: function (data) {
-      window.App.Portfolio.loadPortfolioById();
-      App.Portfolio.investCashPortfolio(qty * pricePerStock);
-
-      setTimeout(function() {
-        console.log('Post Buy Check');
-        // we accidently bought to much
-        if(window.App.datalayer.currentPortfolioCash < 0) {
-          _sellSingleStock(ticker, qty, pricePerStock, market);
-          return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
-        }
-      },500)
-
-    },
-    data: {
-      portfolio_id: porfolioId,
-      stock_market: market,
-      ticker: ticker,
-      company_name: ticker,
-      quantity: qty,
-      price: pricePerStock
-    }
-  });
+  setTimeout(function(){
+    $.ajax(window.App.endpoints.buyStock, {
+      method: 'post',
+      success: function (data) {
+        window.App.Portfolio.loadPortfolioById();
+        App.Portfolio.investCashPortfolio(qty * pricePerStock);
+  
+        setTimeout(function() {
+          console.log('Post Buy Check');
+          // we accidently bought to much
+          if(window.App.datalayer.currentPortfolioCash < 0) {
+            _sellSingleStock(ticker, qty, pricePerStock, market);
+            return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+          }
+        },500)
+  
+      },
+      data: {
+        portfolio_id: porfolioId,
+        stock_market: market,
+        ticker: ticker,
+        company_name: ticker,
+        quantity: qty,
+        price: pricePerStock
+      }
+    });
+  }, 1500);
 }
 
 function _sellSingleStock(ticker, qty, pricePerStock, market, isRepeat) {

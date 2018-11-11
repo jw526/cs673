@@ -657,21 +657,43 @@ function isFirstTimeBuyer (ticker) {
   return firstTime;
 }
 
+
+
+var tranCounter = 1;
+var tranQueue = [];
+
 var isBuyLocked = false;
+
+function ___buySingleStock(ticker, qty, pricePerStock, market) {
+  tranQueue.push('buy');
+  console.log(tranQueue);
+  
+  _buySingleStock(ticker, qty, pricePerStock, market);
+}
+
+function __sellSingleStock(ticker, qty, pricePerStock, market) {
+  tranQueue.push('sell');
+  console.log(tranQueue);
+  _sellSingleStock(ticker, qty, pricePerStock, market);
+}
 
 function _buySingleStock(ticker, qty, pricePerStock, market) {
   var porfolioId = window.getCurrentPortfolioId();
 
-  if (isBuyLocked) {
+  if (isBuyLocked || isSellLocked || tranQueue[0] == 'sell') {
+    console.log('Trying to BUY but needs to wait');
+    
     return setTimeout(function() {
       _buySingleStock(ticker, qty, pricePerStock, market);
-    }, 1000)
+    }, 100)
   }
 
+  console.log('Buying Locked');
   isBuyLocked = true;
 
   if((qty * pricePerStock) > window.App.datalayer.currentPortfolioCash) {
     isBuyLocked = false;
+    tranQueue.shift();
     return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
   }
 
@@ -679,23 +701,23 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
     method: 'post',
     error: function() {
       isBuyLocked = false;
+      tranQueue.shift();
     },
     success: function (data) {
       window.App.Portfolio.loadPortfolioById();
       App.Portfolio.investCashPortfolio(qty * pricePerStock);
 
-      setTimeout(function() {
-        console.log('Post Buy Check');
-        // we accidently bought to much
-        if(window.App.datalayer.currentPortfolioCash < 0) {
-          _sellSingleStock(ticker, qty, pricePerStock, market);
-          return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
-        }
-      },1000)
+      // setTimeout(function() {
+      //   console.log('Post Buy Check');
+      //   // we accidently bought to much
+      //   if(window.App.datalayer.currentPortfolioCash < 0) {
+      //     _sellSingleStock(ticker, qty, pricePerStock, market);
+      //     return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+      //   }
+      // },1000)
 
-      setTimeout(function() {
-        isBuyLocked = false;
-      }, 500);
+      isBuyLocked = false;
+      tranQueue.shift();
     },
     data: {
       portfolio_id: porfolioId,
@@ -708,26 +730,44 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
   });
 }
 
-function _sellSingleStock(ticker, qty, pricePerStock, market, isRepeat) {
+
+var isSellLocked = false;
+
+function _sellSingleStock(ticker, qty, pricePerStock, market) {
   var porfolioId = window.getCurrentPortfolioId();
   var userStockMap = getStocksInCurrentPorfolioMap()
 
-  if(qty > userStockMap[ticker].qty) {
-    if(isRepeat){
-      return alert('Failed To Sell! You are trying to sell ' + qty + ' of ' + ticker + ' but only have ' + userStockMap[ticker].qty);
-    } else {
-      setTimeout(function(){
-        _sellSingleStock(ticker, qty, pricePerStock, market, true);
-      },700);
-    }
+  if (isSellLocked || isBuyLocked || tranQueue[0] == 'buy') {
+    console.log('Trying to SELL but needs to wait');
+
+    return setTimeout(function() {
+      _sellSingleStock(ticker, qty, pricePerStock, market);
+    }, 100)
   }
+
+  
+
+  if(!userStockMap[ticker]) {
+    tranQueue.shift();
+    return alert('Failed To Sell! you dont have any ' + ticker);
+  }
+  if(!userStockMap[ticker] || qty > userStockMap[ticker].qty) {
+    tranQueue.shift();
+    return alert('Failed To Sell! You are trying to sell ' + qty + ' of ' + ticker + ' but only have ' + userStockMap[ticker] && userStockMap[ticker].qty);
+  }
+
+  console.log('Selling Locked');
+  isSellLocked = true;
 
   $.ajax(window.App.endpoints.sellStock, {
     method: 'post',
+    error: function() {isSellLocked = false; tranQueue.shift();},
     success: function (data) {
       window.App.Portfolio.loadPortfolioById();
       
       App.Portfolio.addCashPortfolio(qty * pricePerStock, true, false, false); 
+      isSellLocked = false;
+      tranQueue.shift();
     },
     data: {
       portfolio_id: porfolioId,

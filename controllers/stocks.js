@@ -691,11 +691,11 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
   console.log('Buying Locked');
   isBuyLocked = true;
 
-  if(parseInt(qty * pricePerStock) > window.App.datalayer.currentPortfolioCash) {
-    isBuyLocked = false;
-    tranQueue.shift();
-    return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
-  }
+  // if(parseInt(qty * pricePerStock) > window.App.datalayer.currentPortfolioCash) {
+  //   isBuyLocked = false;
+  //   tranQueue.shift();
+  //   return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+  // }
 
   $.ajax(window.App.endpoints.buyStock, {
     method: 'post',
@@ -707,14 +707,14 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
       window.App.Portfolio.loadPortfolioById();
       App.Portfolio.investCashPortfolio(qty * pricePerStock);
 
-      // setTimeout(function() {
-      //   console.log('Post Buy Check');
-      //   // we accidently bought to much
-      //   if(window.App.datalayer.currentPortfolioCash < 0) {
-      //     _sellSingleStock(ticker, qty, pricePerStock, market);
-      //     return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
-      //   }
-      // },1000)
+      setTimeout(function() {
+        console.log('Post Buy Check');
+        // we accidently bought to much
+        if(window.App.datalayer.currentPortfolioCash < 0) {
+          _sellSingleStock(ticker, qty, pricePerStock, market);
+          return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+        }
+      },1000);
 
       isBuyLocked = false;
       tranQueue.shift();

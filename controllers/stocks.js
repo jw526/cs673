@@ -490,19 +490,14 @@ function rebalance() {
       var stocksToBuy = data.buy;
       var stocksToSell = data.sell;
 
-      for (var index = 0; index < stocksToBuy.length; index++) {
-        var stockToBuy = stocksToBuy[index];
-        _buySingleStock(stockToBuy.ticket, stockToBuy.qty, stockToBuy.price, stockToBuy.market)
-      }
-
       for (var index = 0; index < stocksToSell.length; index++) {
         var stockToSell = stocksToSell[index];
+        _sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market);
+      }
 
-       // if (stockToSell.qty < 0) {
-          //_buySingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
-        //} else {
-          _sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market)
-        //}
+      for (var index = 0; index < stocksToBuy.length; index++) {
+        var stockToBuy = stocksToBuy[index];
+        _buySingleStock(stockToBuy.ticket, stockToBuy.qty, stockToBuy.price, stockToBuy.market);
       }
 
     },
@@ -665,26 +660,52 @@ function isFirstTimeBuyer (ticker) {
 function _buySingleStock(ticker, qty, pricePerStock, market) {
   var porfolioId = window.getCurrentPortfolioId();
 
+  if((qty * pricePerStock) > window.App.datalayer.currentPortfolioCash) {
+    return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+  }
 
-  $.ajax(window.App.endpoints.buyStock, {
-    method: 'post',
-    success: function (data) {
-      window.App.Portfolio.loadPortfolioById();
-      App.Portfolio.investCashPortfolio(qty * pricePerStock)
-    },
-    data: {
-      portfolio_id: porfolioId,
-      stock_market: market,
-      ticker: ticker,
-      company_name: ticker,
-      quantity: qty,
-      price: pricePerStock
-    }
-  });
+  setTimeout(function(){
+    $.ajax(window.App.endpoints.buyStock, {
+      method: 'post',
+      success: function (data) {
+        window.App.Portfolio.loadPortfolioById();
+        App.Portfolio.investCashPortfolio(qty * pricePerStock);
+  
+        setTimeout(function() {
+          console.log('Post Buy Check');
+          // we accidently bought to much
+          if(window.App.datalayer.currentPortfolioCash < 0) {
+            _sellSingleStock(ticker, qty, pricePerStock, market);
+            return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+          }
+        },500)
+  
+      },
+      data: {
+        portfolio_id: porfolioId,
+        stock_market: market,
+        ticker: ticker,
+        company_name: ticker,
+        quantity: qty,
+        price: pricePerStock
+      }
+    });
+  }, 1500);
 }
 
-function _sellSingleStock(ticker, qty, pricePerStock, market) {
+function _sellSingleStock(ticker, qty, pricePerStock, market, isRepeat) {
   var porfolioId = window.getCurrentPortfolioId();
+  var userStockMap = getStocksInCurrentPorfolioMap()
+
+  if(qty > userStockMap[ticker].qty) {
+    if(isRepeat){
+      return alert('Failed To Sell! You are trying to sell ' + qty + ' of ' + ticker + ' but only have ' + userStockMap[ticker].qty);
+    } else {
+      setTimeout(function(){
+        _sellSingleStock(ticker, qty, pricePerStock, market, true);
+      },700);
+    }
+  }
 
   $.ajax(window.App.endpoints.sellStock, {
     method: 'post',
@@ -699,7 +720,8 @@ function _sellSingleStock(ticker, qty, pricePerStock, market) {
       ticker: ticker,
       company_name: ticker,
       quantity: qty,
-      price: pricePerStock
+      price: pricePerStock,
+      transToSell: 99999// FixMe
     }
   });
 }
@@ -717,14 +739,14 @@ function handleOrderUploadData(arrayOfActions) {
       _getStockPrice(action.ticker, function (price) {
 
         if ((action.qty * price) > window.App.datalayer.currentPortfolioCash) {
-          alert(action.ticker + " requires more money to guy " + action.qty + " Of");
+          alert(action.ticker + " requires more money to buy " + action.qty + " Of.");
           return;
         }
         _buySingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
       });
     } else {
       _getStockPrice(action.ticker, function (price) {
-        _sellSingleStock(action.ticker, action.qty, price, 'N/A');
+        _sellSingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
       });
     }
   }
@@ -812,4 +834,11 @@ function getUserUsStocksForCurrentPortfolio() {
   }
 
   return stocks;
+}
+
+function getStocksInCurrentPorfolioMap() {
+  return Object.assign(
+    getUserInidaStocksForCurrentPortfolio(),
+    getUserUsStocksForCurrentPortfolio()
+  )
 }

@@ -80,6 +80,10 @@ window.App = window.App || {};
   function _removeCashPortfolio () {
     var amount = $("#remove-cash-amount").val();
 
+    if (amount > window.App.datalayer.currentPortfolioCash) {
+      return alert('You only have $' + window.App.datalayer.currentPortfolioCash);
+    }
+
     _investCashPortfolio(amount);
     _addCashPortfolio(amount, true, false, true);    
     _toggleRemoveCashModal();

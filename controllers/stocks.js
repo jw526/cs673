@@ -664,7 +664,7 @@ var tranQueue = [];
 
 var isBuyLocked = false;
 
-function ___buySingleStock(ticker, qty, pricePerStock, market) {
+function __buySingleStock(ticker, qty, pricePerStock, market) {
   tranQueue.push('buy');
   console.log(tranQueue);
   

@@ -665,6 +665,9 @@ function isFirstTimeBuyer (ticker) {
 function _buySingleStock(ticker, qty, pricePerStock, market) {
   var porfolioId = window.getCurrentPortfolioId();
 
+  if((qty * pricePerStock) > window.App.datalayer.currentPortfolioCash) {
+    return alert('You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+  }
 
   $.ajax(window.App.endpoints.buyStock, {
     method: 'post',
@@ -717,7 +720,7 @@ function handleOrderUploadData(arrayOfActions) {
       _getStockPrice(action.ticker, function (price) {
 
         if ((action.qty * price) > window.App.datalayer.currentPortfolioCash) {
-          alert(action.ticker + " requires more money to guy " + action.qty + " Of");
+          alert(action.ticker + " requires more money to guy " + action.qty + " Of.");
           return;
         }
         _buySingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');

@@ -69,7 +69,7 @@
         
 
         // if cash is greater than 10% of the total portfolio value, buy underweight asset (foreign/domestic)
-        if ($cash > 0.1 * $totalPortfolioValue){
+     /*   if ($cash > 0.1 * $totalPortfolioValue){
             $buyAmt = $cash - 0.1 * $totalPortfolioValue;
             //domestic is overweight, buy foreign
             if($domesticStockValue/($domesticStockValue + $foreignStockValue) > 0.7){
@@ -99,7 +99,7 @@
             }
             $cash = 0.1 * $totalPortfolioValue;
     
-        } 
+        } */
         //domestic is underweight
         if($domesticStockValue/($domesticStockValue + $foreignStockValue) < 0.7){
             $domesticBuyAmt = 0.7 * $totalPortfolioValue - $domesticStockValue;
@@ -205,6 +205,6 @@
         rebalance();
     }
 
-    // rebalance();
+    //rebalance();
 
 ?>

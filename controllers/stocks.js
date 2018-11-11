@@ -725,10 +725,10 @@ function handleOrderUploadData(arrayOfActions) {
     if (action.action == 'buy') {
       _getStockPrice(action.ticker, function (price) {
 
-        // if ((action.qty * price) > window.App.datalayer.currentPortfolioCash) {
-        //   alert(action.ticker + " requires more money to guy " + action.qty + " Of.");
-        //   return;
-        // }
+        if ((action.qty * price) > window.App.datalayer.currentPortfolioCash) {
+          alert(action.ticker + " requires more money to guy " + action.qty + " Of.");
+          return;
+        }
         _buySingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
       });
     } else {

@@ -691,7 +691,7 @@ function _buySingleStock(ticker, qty, pricePerStock, market) {
   console.log('Buying Locked');
   isBuyLocked = true;
 
-  if((qty * pricePerStock) > window.App.datalayer.currentPortfolioCash) {
+  if(parseInt(qty * pricePerStock) > window.App.datalayer.currentPortfolioCash) {
     isBuyLocked = false;
     tranQueue.shift();
     return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);

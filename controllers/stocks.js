@@ -492,12 +492,12 @@ function rebalance() {
 
       for (var index = 0; index < stocksToSell.length; index++) {
         var stockToSell = stocksToSell[index];
-        _sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market);
+        __sellSingleStock(stockToSell.ticket, Math.abs(stockToSell.qty), stockToSell.price, stockToSell.market);
       }
 
       for (var index = 0; index < stocksToBuy.length; index++) {
         var stockToBuy = stocksToBuy[index];
-        _buySingleStock(stockToBuy.ticket, stockToBuy.qty, stockToBuy.price, stockToBuy.market);
+        __buySingleStock(stockToBuy.ticket, stockToBuy.qty, stockToBuy.price, stockToBuy.market);
       }
 
     },
@@ -657,62 +657,117 @@ function isFirstTimeBuyer (ticker) {
   return firstTime;
 }
 
+
+
+var tranCounter = 1;
+var tranQueue = [];
+
+var isBuyLocked = false;
+
+function __buySingleStock(ticker, qty, pricePerStock, market) {
+  tranQueue.push('buy');
+  console.log(tranQueue);
+  
+  _buySingleStock(ticker, qty, pricePerStock, market);
+}
+
+function __sellSingleStock(ticker, qty, pricePerStock, market) {
+  tranQueue.push('sell');
+  console.log(tranQueue);
+  _sellSingleStock(ticker, qty, pricePerStock, market);
+}
+
 function _buySingleStock(ticker, qty, pricePerStock, market) {
   var porfolioId = window.getCurrentPortfolioId();
 
-  if((qty * pricePerStock) > window.App.datalayer.currentPortfolioCash) {
-    return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+  if (isBuyLocked || isSellLocked || tranQueue[0] == 'sell') {
+    console.log('Trying to BUY but needs to wait');
+    
+    return setTimeout(function() {
+      _buySingleStock(ticker, qty, pricePerStock, market);
+    }, 100)
   }
 
-  setTimeout(function(){
-    $.ajax(window.App.endpoints.buyStock, {
-      method: 'post',
-      success: function (data) {
-        window.App.Portfolio.loadPortfolioById();
-        App.Portfolio.investCashPortfolio(qty * pricePerStock);
-  
-        setTimeout(function() {
-          console.log('Post Buy Check');
-          // we accidently bought to much
-          if(window.App.datalayer.currentPortfolioCash < 0) {
-            _sellSingleStock(ticker, qty, pricePerStock, market);
-            return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
-          }
-        },500)
-  
-      },
-      data: {
-        portfolio_id: porfolioId,
-        stock_market: market,
-        ticker: ticker,
-        company_name: ticker,
-        quantity: qty,
-        price: pricePerStock
-      }
-    });
-  }, 1500);
+  console.log('Buying Locked');
+  isBuyLocked = true;
+
+  // if(parseInt(qty * pricePerStock) > window.App.datalayer.currentPortfolioCash) {
+  //   isBuyLocked = false;
+  //   tranQueue.shift();
+  //   return alert('Buy Failed! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+  // }
+
+  $.ajax(window.App.endpoints.buyStock, {
+    method: 'post',
+    error: function() {
+      isBuyLocked = false;
+      tranQueue.shift();
+    },
+    success: function (data) {
+      window.App.Portfolio.loadPortfolioById();
+      App.Portfolio.investCashPortfolio(qty * pricePerStock);
+
+      setTimeout(function() {
+        console.log('Post Buy Check');
+        // we accidently bought to much
+        if(window.App.datalayer.currentPortfolioCash < 0) {
+          _sellSingleStock(ticker, qty, pricePerStock, market);
+          return alert('Trying to buy to much! You need $' + qty * pricePerStock + " to complete this transaction of buying " + qty + " shares of " + ticker);
+        }
+      },1000);
+
+      isBuyLocked = false;
+      tranQueue.shift();
+    },
+    data: {
+      portfolio_id: porfolioId,
+      stock_market: market,
+      ticker: ticker,
+      company_name: ticker,
+      quantity: qty,
+      price: pricePerStock
+    }
+  });
 }
 
-function _sellSingleStock(ticker, qty, pricePerStock, market, isRepeat) {
+
+var isSellLocked = false;
+
+function _sellSingleStock(ticker, qty, pricePerStock, market) {
   var porfolioId = window.getCurrentPortfolioId();
   var userStockMap = getStocksInCurrentPorfolioMap()
 
-  if(qty > userStockMap[ticker].qty) {
-    if(isRepeat){
-      return alert('Failed To Sell! You are trying to sell ' + qty + ' of ' + ticker + ' but only have ' + userStockMap[ticker].qty);
-    } else {
-      setTimeout(function(){
-        _sellSingleStock(ticker, qty, pricePerStock, market, true);
-      },700);
-    }
+  if (isSellLocked || isBuyLocked || tranQueue[0] == 'buy') {
+    console.log('Trying to SELL but needs to wait');
+
+    return setTimeout(function() {
+      _sellSingleStock(ticker, qty, pricePerStock, market);
+    }, 100)
   }
+
+  
+
+  if(!userStockMap[ticker]) {
+    tranQueue.shift();
+    return alert('Failed To Sell! you dont have any ' + ticker);
+  }
+  if(!userStockMap[ticker] || qty > userStockMap[ticker].qty) {
+    tranQueue.shift();
+    return alert('Failed To Sell! You are trying to sell ' + qty + ' of ' + ticker + ' but only have ' + userStockMap[ticker] && userStockMap[ticker].qty);
+  }
+
+  console.log('Selling Locked');
+  isSellLocked = true;
 
   $.ajax(window.App.endpoints.sellStock, {
     method: 'post',
+    error: function() {isSellLocked = false; tranQueue.shift();},
     success: function (data) {
       window.App.Portfolio.loadPortfolioById();
       
       App.Portfolio.addCashPortfolio(qty * pricePerStock, true, false, false); 
+      isSellLocked = false;
+      tranQueue.shift();
     },
     data: {
       portfolio_id: porfolioId,
@@ -742,11 +797,11 @@ function handleOrderUploadData(arrayOfActions) {
           alert(action.ticker + " requires more money to buy " + action.qty + " Of.");
           return;
         }
-        _buySingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
+        __buySingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
       });
     } else {
       _getStockPrice(action.ticker, function (price) {
-        _sellSingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
+        __sellSingleStock(action.ticker, action.qty, price, isIndianStock(action.ticker) ? 'BSE/NSE' : 'Dow-30');
       });
     }
   }

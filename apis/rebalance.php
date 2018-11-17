@@ -92,20 +92,17 @@
 
         } 
         
-        echo json_encode($obj);
-        autobalance();
+        // echo json_encode($obj);
+        autobalance($obj);
         //var_dump(json_decode($obj));
     }
 
-    function autobalance() {
+    function autobalance(actionObject) {
         global $portfolio_id, $domesticStockValue, $foreignStockValue, $cash, $totalPortfolioValue, $us_stocks, $india_stocks,
         $tickerDomesticMostReturn, $tickerDomesticLeastReturn, $tickerForeignLeastReturn, $tickerForeignMostReturn,
         $domesticLeastReturnPrice, $domesticMostReturnPrice, $foreignLeastReturnPrice, $foreignMostReturnPrice; 
         
-        $obj = (object) [
-            'buy' => [],
-            'sell' => []
-        ];
+        $obj = $actionObject;
 
         $totalPortfolioValue = $domesticStockValue + $foreignStockValue + $cash;
 

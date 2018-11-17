@@ -66,6 +66,8 @@
         
         $totalPortfolioValue = $domesticStockValue + $foreignStockValue + $cash;
 
+        global $obj;
+
         // if cash is greater than 10% of the total portfolio value, buy underweight asset (foreign/domestic)
         if ($cash > 0.1 * $totalPortfolioValue){
             $buyAmt = $cash - 0.1 * $totalPortfolioValue;
@@ -92,7 +94,7 @@
 
         } 
         
-        echo json_encode($obj);
+        //echo json_encode($obj);
         autobalance();
         //var_dump(json_decode($obj));
     }
@@ -104,6 +106,8 @@
         
         $totalPortfolioValue = $domesticStockValue + $foreignStockValue + $cash;
 
+        global $obj;
+        
         $us = json_decode($us_stocks);
         $is = json_decode($india_stocks);  
                //domestic is underweight

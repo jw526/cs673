@@ -4,7 +4,7 @@ function calculateReturnValue(ticker, livePrice) {
         var userStocks = window.App.datalayer.currentStocksForCurrentView;
         var stock = null;
 
-        for (let index = 0; index < userStocks.length; index++) {
+        for (var index = 0; index < userStocks.length; index++) {
             var _stock = userStocks[index];
             if (_stock.id == ticker) {
                 stock = _stock;

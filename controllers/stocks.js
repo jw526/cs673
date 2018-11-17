@@ -525,7 +525,7 @@ function calculateReturnValue (ticker, livePrice) {
     var userStocks = window.App.datalayer.currentStocksForCurrentView;
     var stock = null;
 
-    for (let index = 0; index < userStocks.length; index++) {
+    for (var index = 0; index < userStocks.length; index++) {
       var _stock = userStocks[index];
       if (_stock.id == ticker) {
         stock = _stock;
@@ -861,12 +861,14 @@ function getUserInidaStocksForCurrentPortfolio() {
   var currentStocks = window.App.datalayer.currentStocksForCurrentView;
   var stocks = {};
 
-  for (let index = 0; index < currentStocks.length; index++) {
-    const stock = currentStocks[index];
+  for (var index = 0; index < currentStocks.length; index++) {
+    var stock = currentStocks[index];
     if (stock.stock_market == "BSE/NSE") {
-      stocks[patchTicker(stock.id)]= {
+      var ticker = patchTicker(stock.id);
+      stocks[ticker]= {
         price: window.App.datalayer.currentStockPrices[stock.id],
-        qty: stock.qty
+        qty: stock.qty,
+        ticker: ticker
       }
     }
   }
@@ -878,12 +880,14 @@ function getUserUsStocksForCurrentPortfolio() {
   var currentStocks = window.App.datalayer.currentStocksForCurrentView;
   var stocks = {};
 
-  for (let index = 0; index < currentStocks.length; index++) {
-    const stock = currentStocks[index];
+  for (var index = 0; index < currentStocks.length; index++) {
+    var stock = currentStocks[index];
     if (stock.stock_market != "BSE/NSE") {
-      stocks[patchTicker(stock.id)]= {
+      var ticker = patchTicker(stock.id);
+      stocks[ticker]= {
         price: window.App.datalayer.currentStockPrices[stock.id],
-        qty: stock.qty
+        qty: stock.qty,
+        ticker: ticker
       }
     }
   }

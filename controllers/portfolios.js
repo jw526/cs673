@@ -188,8 +188,8 @@ window.App = window.App || {};
         });
 
         _getStocksByPortfolioId(window.App.datalayer.selectedPortfolioId, function(stocks) {
-          for (let index = 0; index < stocks.length; index++) {
-            const stock = stocks[index];
+          for (var index = 0; index < stocks.length; index++) {
+            var stock = stocks[index];
             addStockValueToCashAccunt(stock);
           }
         });

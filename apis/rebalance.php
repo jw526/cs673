@@ -19,7 +19,12 @@
     $domesticLeastReturnPrice = (double) file_get_contents('https://web.njit.edu/~mc332/webapps8/hello2?ticket='.$tickerDomesticLeastReturn);
     $foreignMostReturnPrice = 0.014 * (double) file_get_contents('https://web.njit.edu/~mc332/webapps8/hello2?ticket='.$tickerForeignMostReturn);
     $foreignLeastReturnPrice = 0.014 * (double) file_get_contents('https://web.njit.edu/~mc332/webapps8/hello2?ticket='.$tickerForeignLeastReturn);
-        
+       
+    $obj = (object) [
+        'buy' => [],
+        'sell' => []
+    ];
+
 
     function buy($portfolio_id, $stock_market, $ticker, $company_name, $quantity, $price){
         
@@ -59,11 +64,6 @@
         $tickerDomesticMostReturn, $tickerDomesticLeastReturn, $tickerForeignLeastReturn, $tickerForeignMostReturn,
         $domesticLeastReturnPrice, $domesticMostReturnPrice, $foreignLeastReturnPrice, $foreignMostReturnPrice; 
         
-        $obj = (object) [
-            'buy' => [],
-            'sell' => []
-        ];
-
         $totalPortfolioValue = $domesticStockValue + $foreignStockValue + $cash;
 
         // if cash is greater than 10% of the total portfolio value, buy underweight asset (foreign/domestic)
@@ -92,18 +92,16 @@
 
         } 
         
-        // echo json_encode($obj);
-        autobalance($obj);
+        echo json_encode($obj);
+        autobalance();
         //var_dump(json_decode($obj));
     }
 
-    function autobalance(actionObject) {
+    function autobalance() {
         global $portfolio_id, $domesticStockValue, $foreignStockValue, $cash, $totalPortfolioValue, $us_stocks, $india_stocks,
         $tickerDomesticMostReturn, $tickerDomesticLeastReturn, $tickerForeignLeastReturn, $tickerForeignMostReturn,
         $domesticLeastReturnPrice, $domesticMostReturnPrice, $foreignLeastReturnPrice, $foreignMostReturnPrice; 
         
-        $obj = $actionObject;
-
         $totalPortfolioValue = $domesticStockValue + $foreignStockValue + $cash;
 
         $us = json_decode($us_stocks);
@@ -200,6 +198,12 @@
     
         }
         echo json_encode($obj);
+
+        // reset Object
+        $obj = (object) [
+            'buy' => [],
+            'sell' => []
+        ];
     }
 
     if ($function == 'needRebalance') {

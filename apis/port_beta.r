@@ -2,76 +2,12 @@
 library(tseries);
 library(jsonlite);
 args <- commandArgs(TRUE);
-#domesticStockValue = args[1];
-#foreignStockValue = args[2];
-#cash = args[3];
-#us_stocks = args[4];
-#india_stocks = args[5];
+domesticStockValue = args[1];
+foreignStockValue = args[2];
+cash = args[3];
+us_stocks = args[4];
+india_stocks = args[5];
 
-# hard code for testing
-domesticStockValue = 3687.29;
-foreignStockValue = 859.85;
-cash = 100;
-totalPortfolioValue = domesticStockValue + foreignStockValue + cash;
-us_stocks = '{
-        "aapl":{
-          "ticker": "AAPL",  
-          "price": 333.3, 
-          "qty": 3
-        },
-        "hd":{
-          "ticker": "HD",  
-          "price": 222.2,
-          "qty": 2
-        },
-        "ibb": {
-            "ticker": "IBB",
-            "price":55.5,
-            "qty": 5
-        },
-
-        "GS": {
-            "ticker": "GS",
-            "price": 666,
-            "qty": 2
-        },
-        "AMZN": {
-            "ticker": "AMZN",
-            "price": 77.77,
-            "qty": 7
-        },
-        "GE": {
-            "ticker": "GE",
-            "price": 9.9,
-            "qty": 9
-        }
-    }'; 
-
-    india_stocks = '{
-
-        "GAIL.NS": {
-            "ticker": "GAIL.NS",
-            "price": 11.11,
-            "qty": 1
-        },
-
-        "SBIN.NS": {
-            "ticker": "SBIN.NS",
-            "price": 22.22,
-            "qty": 2
-        },
-        "TCS.NS": {
-            "ticker": "TCS.NS",
-            "price": 44.44,
-            "qty": 4
-        },
-
-        "ITC.NS": {
-            "ticker": "ITC.NS",
-            "price": 8.88,
-            "qty": 8
-        }
-    }';
 us = fromJSON(us_stocks);
 is = fromJSON(india_stocks);
 
@@ -110,7 +46,8 @@ for(i in is){
     close = get.hist.quote(instrument = i$ticker, start = "2017-01-01", quote = "Close");
     diff = (close - open)/ open;
     c = cbind (niftydiff, diff);
-    c = na.locf(na.locf(c), fromLast = TRUE);
+    #c = na.locf(na.locf(c), fromLast = TRUE);
+    c = na.fill(c, fill = 0);
     c = as.data.frame(c);
     beta = cov(c[[1]], c[[2]])/ var (niftydiff);
     weight = i$price * i$qty / totalPortfolioValue;

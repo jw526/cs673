@@ -15,6 +15,7 @@ window.App = window.App || {};
     addNewPortfolio: _addNewPortfolio,
     deletePortfolio: _deletePortfolio,
     toggleDeleteModal: _toggleDeleteModal,
+    toggleExpectedReturn: _toggleExpectedReturn,
     removeCashPortfolio: _removeCashPortfolio,
     toggleRemoveCashModal: _toggleRemoveCashModal,
     addCashPortfolio: _addCashPortfolio,
@@ -152,6 +153,38 @@ window.App = window.App || {};
     $('#delete-port-modal').modal('toggle');
   }
 
+  function _toggleExpectedReturn(element) {
+    var selectedPortfolioId = $($(element).parent().parent().children('.number')[0]).html()
+
+    window.App.datalayer.selectedPortfolioId = selectedPortfolioId;
+
+    // This is a HACK so we dont redirect on row click 
+    window.isDontRedirect = true;
+    setTimeout(function() {
+      window.isDontRedirect = false;
+    }, 100);
+    // Hack above 
+
+    window.location.href = window.App.pages.portfolioView + '?id=' + selectedPortfolioId + "&action=expectedreturn";
+
+  }
+
+
+  function loadExpectedReturn(selectedPortfolioId) {
+    $.ajax(window.App.endpoints.expectedReturn, {
+      method: 'post',
+      success: function()
+        {
+          _loadUserPortfolios();
+          $('#add-port-modal').modal('toggle');
+        },
+      data: {
+        portfolioName: name
+      }
+    });
+  }
+
+
   function _toggleRemoveCashModal() {
     $('#remove-cash-modal').modal('toggle');
   }
@@ -275,6 +308,7 @@ window.App = window.App || {};
     window.App.datalayer.currentStocksForCurrentView = stocks;
     
     setTimeout(renderPercentageAllocation, 1000);
+    setTimeout(triggerExpectedReturn, 1000);
 
     for (var index = 0; index < stocks.length; index++) {
       var portfolio = stocks[index];

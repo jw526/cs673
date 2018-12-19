@@ -46,6 +46,7 @@ window.App.endpoints = {
   getPortfolioById: prefix + '/apis/getPortfolioById.php',
   getUserInfo: prefix + '/apis/getUserInfo.php',
   downloadPortfolio: prefix + "/apis/report.php",
+  expectedReturn: prefix + "/apis/er.php",
   getStockInfo: window.App.isLocalHost ? "/apis/getStockInfo.php": 'https://web.njit.edu/~mc332/webapps8/hello2'
 }
 
@@ -93,6 +94,50 @@ function initMyPortfolio() {
     window.App.Portfolio.loadPortfolioById
   ]);
 }
+
+
+
+function triggerExpectedReturn () {
+  if (window.location.search.indexOf('action=expectedreturn') > 0) {
+    $('#expected-port-modal').modal('toggle');
+
+
+
+      //Expected Return Last Minute Coding
+
+      $.ajax(window.App.endpoints.expectedReturn, {
+        method: 'post',
+        success: function (data) {
+          alert(data)
+          //alert('IT DID NOT DIE!')
+        },
+        data: {
+          us_stocks: JSON.stringify(getUserUsStocksForCurrentPortfolio()).replace(/,/g, '~'),
+          india_stocks: JSON.stringify(getUserInidaStocksForCurrentPortfolio()).replace(/,/g, '~')
+        }
+      });
+
+
+
+
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function initLoginScreen() {
   $("#login-form").on('submit', function (event) {

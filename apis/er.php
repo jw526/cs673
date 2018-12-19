@@ -4,10 +4,10 @@ $function = $_POST['function'];
 $us_stocks = $_POST['us_stocks'];
 $india_stocks = $_POST['india_stocks'];
 
-function exec_r (){
+
     global $us_stocks, $india_stocks;
 
-    exec('Rscript ER.r $us_stocks $india_stocks', $output);
+    exec("Rscript ER.r $us_stocks $india_stocks", $output);
 
     echo "Stock Expected Return(Daily):", PHP_EOL;
 
@@ -15,6 +15,6 @@ function exec_r (){
         // $line = explode ( " " , $output[$i] );
         echo $output[$i], PHP_EOL;
     }
-}
+
 
 ?>

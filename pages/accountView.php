@@ -33,6 +33,7 @@
         <td class="name"></td>
         <td class="delete">
           <button class="btn btn-danger" onclick="window.App.Portfolio.toggleDeleteModal(this)">delete</button>
+          <button class="btn btn-primary" onclick="window.App.Portfolio.toggleExpectedReturn(this)">Expected Reutrn</button>
         </td>
       </tr>
     </tbody>
